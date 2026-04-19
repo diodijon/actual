@@ -1,4 +1,6 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type {
   ComponentPropsWithoutRef,
   ComponentPropsWithRef,
@@ -71,6 +73,7 @@ export const Modal = ({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <ReactAriaModalOverlay
       data-testid={`${name}-modal`}
       isDismissable
@@ -169,6 +172,7 @@ export const Modal = ({
         </ReactAriaModal>
       </View>
     </ReactAriaModalOverlay>
+    </ErrorBoundary>
   );
 };
 
