@@ -2,6 +2,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { AnimatedLoading } from '@actual-app/components/icons/AnimatedLoading';
 import { Paragraph } from '@actual-app/components/paragraph';
@@ -263,6 +266,7 @@ export function GoCardlessExternalMsgModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="gocardless-external-msg"
       onClose={onClose}
@@ -347,5 +351,6 @@ export function GoCardlessExternalMsgModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

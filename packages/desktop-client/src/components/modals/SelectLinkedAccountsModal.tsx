@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
 import { Input } from '@actual-app/components/input';
@@ -330,6 +333,7 @@ export function SelectLinkedAccountsModal({
   }, [draftLinkAccounts, t]);
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="select-linked-accounts"
       containerProps={{
@@ -471,6 +475,7 @@ export function SelectLinkedAccountsModal({
         </View>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }
 

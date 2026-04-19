@@ -1,4 +1,6 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useTranslation } from 'react-i18next';
 
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
@@ -40,6 +42,7 @@ export function CategoryAutocompleteModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="category-autocomplete"
       noAnimation={!isNarrowWidth}
@@ -106,5 +109,6 @@ export function CategoryAutocompleteModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

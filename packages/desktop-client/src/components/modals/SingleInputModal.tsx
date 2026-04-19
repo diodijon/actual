@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import type { ComponentPropsWithoutRef, ComponentType, FormEvent } from 'react';
 import { Form } from 'react-aria-components';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { FormError } from '@actual-app/components/form-error';
 import { InitialFocus } from '@actual-app/components/initial-focus';
@@ -46,6 +49,7 @@ export function SingleInputModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name={name}>
       {({ state }) => (
         <>
@@ -101,5 +105,6 @@ export function SingleInputModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

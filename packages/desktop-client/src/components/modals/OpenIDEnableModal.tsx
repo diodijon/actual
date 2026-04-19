@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { Label } from '@actual-app/components/label';
 import { styles } from '@actual-app/components/styles';
@@ -61,6 +64,7 @@ export function OpenIDEnableModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="enable-openid">
       {({ state }) => (
         <>
@@ -111,5 +115,6 @@ export function OpenIDEnableModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

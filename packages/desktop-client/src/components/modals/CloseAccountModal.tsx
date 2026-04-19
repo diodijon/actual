@@ -1,5 +1,7 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { CSSProperties, FormEvent } from 'react';
 import { Form } from 'react-aria-components';
 import { Trans, useTranslation } from 'react-i18next';
@@ -120,6 +122,7 @@ export function CloseAccountModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="close-account"
       isLoading={loading}
@@ -325,5 +328,6 @@ export function CloseAccountModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

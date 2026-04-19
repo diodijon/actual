@@ -1,5 +1,7 @@
 // @ts-strict-ignore
 import React, { useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { CSSProperties } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -79,6 +81,7 @@ export function CategoryMenuModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="category-menu"
       onClose={onClose}
@@ -156,6 +159,7 @@ export function CategoryMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }
 

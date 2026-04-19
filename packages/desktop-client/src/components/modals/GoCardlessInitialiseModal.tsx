@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { ButtonWithLoading } from '@actual-app/components/button';
 import { InitialFocus } from '@actual-app/components/initial-focus';
 import { Input } from '@actual-app/components/input';
@@ -81,6 +84,7 @@ export const GoCardlessInitialiseModal = ({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="gocardless-init" containerProps={{ style: { width: '30vw' } }}>
       {({ state }) => (
         <>
@@ -150,5 +154,6 @@ export const GoCardlessInitialiseModal = ({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 };

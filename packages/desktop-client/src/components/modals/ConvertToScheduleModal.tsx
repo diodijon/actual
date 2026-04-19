@@ -1,4 +1,6 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
@@ -34,6 +36,7 @@ export function ConvertToScheduleModal({
     : {};
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="convert-to-schedule"
       containerProps={{ style: { width: '30vw' } }}
@@ -118,5 +121,6 @@ export function ConvertToScheduleModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

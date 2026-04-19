@@ -1,5 +1,8 @@
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Text } from '@actual-app/components/text';
 import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
@@ -12,6 +15,7 @@ export function GoalTemplateModal() {
   const { t } = useTranslation();
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="goal-templates" containerProps={{ style: { width: 850 } }}>
       {({ state }) => (
         <>
@@ -189,5 +193,6 @@ export function GoalTemplateModal() {
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

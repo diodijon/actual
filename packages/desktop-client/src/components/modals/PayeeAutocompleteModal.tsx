@@ -1,6 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
 import { theme } from '@actual-app/components/theme';
 
@@ -38,6 +41,7 @@ export function PayeeAutocompleteModal({
   const onManagePayees = () => navigate('/payees');
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="payee-autocomplete"
       noAnimation={!isNarrowWidth}
@@ -86,5 +90,6 @@ export function PayeeAutocompleteModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

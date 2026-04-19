@@ -1,6 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { SpaceBetween } from '@actual-app/components/space-between';
 import { styles } from '@actual-app/components/styles';
 import { sheetForMonth } from '@actual-app/core/shared/months';
@@ -24,6 +27,7 @@ export function TrackingBudgetSummaryModal({
   const { t } = useTranslation();
   const currentMonth = monthUtils.currentMonth();
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="tracking-budget-summary">
       {({ state }) => (
         <>
@@ -53,5 +57,6 @@ export function TrackingBudgetSummaryModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

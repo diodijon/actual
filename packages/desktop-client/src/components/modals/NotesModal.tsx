@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { SvgCheck } from '@actual-app/components/icons/v2';
 import { View } from '@actual-app/components/view';
@@ -27,6 +30,7 @@ export function NotesModal({ id, name, onSave }: NotesModalProps) {
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="notes"
       containerProps={{
@@ -85,5 +89,6 @@ export function NotesModal({ id, name, onSave }: NotesModalProps) {
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

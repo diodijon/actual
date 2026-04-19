@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { Label } from '@actual-app/components/label';
 import { styles } from '@actual-app/components/styles';
@@ -71,6 +74,7 @@ export function PasswordEnableModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="enable-password-auth">
       {({ state }) => (
         <>
@@ -145,5 +149,6 @@ export function PasswordEnableModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

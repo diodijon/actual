@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Block } from '@actual-app/components/block';
 import { Button } from '@actual-app/components/button';
 import { Text } from '@actual-app/components/text';
@@ -80,6 +83,7 @@ export function LoadBackupModal({
   const { t } = useTranslation();
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="load-backup" containerProps={{ style: { maxWidth: '30vw' } }}>
       {({ state }) => (
         <>
@@ -168,5 +172,6 @@ export function LoadBackupModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

@@ -1,6 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { styles } from '@actual-app/components/styles';
 import {
   format as formatMonth,
@@ -152,6 +155,7 @@ export function EnvelopeBudgetSummaryModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="envelope-budget-summary">
       {({ state }) => (
         <>
@@ -182,5 +186,6 @@ export function EnvelopeBudgetSummaryModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

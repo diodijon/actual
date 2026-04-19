@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { Trans } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import {
   SvgCheveronDown,
@@ -97,6 +100,7 @@ export function TrackingBudgetMenuModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="tracking-budget-menu">
       {({ state }) => (
         <>
@@ -205,5 +209,6 @@ export function TrackingBudgetMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

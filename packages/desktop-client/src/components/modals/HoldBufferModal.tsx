@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { InitialFocus } from '@actual-app/components/initial-focus';
 import { styles } from '@actual-app/components/styles';
@@ -36,6 +39,7 @@ export function HoldBufferModal({ onSubmit }: HoldBufferModalProps) {
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="hold-buffer">
       {({ state }) => (
         <>
@@ -87,5 +91,6 @@ export function HoldBufferModal({ onSubmit }: HoldBufferModalProps) {
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

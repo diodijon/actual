@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { ButtonWithLoading } from '@actual-app/components/button';
 import { Input } from '@actual-app/components/input';
 import { Text } from '@actual-app/components/text';
@@ -59,6 +62,7 @@ export const SimpleFinInitialiseModal = ({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="simplefin-init" containerProps={{ style: { width: 300 } }}>
       {({ state }) => (
         <>
@@ -114,5 +118,6 @@ export const SimpleFinInitialiseModal = ({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 };

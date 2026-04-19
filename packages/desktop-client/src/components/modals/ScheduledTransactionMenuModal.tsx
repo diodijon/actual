@@ -2,6 +2,9 @@ import React, { useMemo } from 'react';
 import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Menu } from '@actual-app/components/menu';
 import { styles } from '@actual-app/components/styles';
 import { Text } from '@actual-app/components/text';
@@ -62,6 +65,7 @@ export function ScheduledTransactionMenuModal({
   const canBeCompleted = !scheduleIsRecurring(dateCond);
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="scheduled-transaction-menu">
       {({ state }) => (
         <>
@@ -95,6 +99,7 @@ export function ScheduledTransactionMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }
 

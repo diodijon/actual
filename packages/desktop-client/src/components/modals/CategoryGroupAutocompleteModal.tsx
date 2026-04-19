@@ -1,4 +1,6 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useTranslation } from 'react-i18next';
 
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
@@ -40,6 +42,7 @@ export function CategoryGroupAutocompleteModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="category-group-autocomplete"
       noAnimation={!isNarrowWidth}
@@ -105,5 +108,6 @@ export function CategoryGroupAutocompleteModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

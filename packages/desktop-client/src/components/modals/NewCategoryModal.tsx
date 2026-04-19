@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { ModalHeader, ModalTitle } from '#components/common/Modal';
 import type { Modal } from '#modals/modalsSlice';
 
@@ -16,6 +19,7 @@ export function NewCategoryModal({
 }: NewCategoryModalProps) {
   const { t } = useTranslation();
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <SingleInputModal
       name="new-category"
       Header={props => (
@@ -29,5 +33,6 @@ export function NewCategoryModal({
       onValidate={onValidate}
       onSubmit={onSubmit}
     />
+    </ErrorBoundary>
   );
 }

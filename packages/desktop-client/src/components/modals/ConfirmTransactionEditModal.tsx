@@ -1,5 +1,7 @@
 // @ts-strict-ignore
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
@@ -32,6 +34,7 @@ export function ConfirmTransactionEditModal({
     : {};
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="confirm-transaction-edit"
       containerProps={{ style: { width: '30vw' } }}
@@ -156,5 +159,6 @@ export function ConfirmTransactionEditModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

@@ -2,6 +2,9 @@ import React from 'react';
 import type { CSSProperties } from 'react';
 import { Trans } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { styles } from '@actual-app/components/styles';
 import { Text } from '@actual-app/components/text';
 import { theme } from '@actual-app/components/theme';
@@ -46,6 +49,7 @@ export function TrackingBalanceMenuModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="tracking-balance-menu">
       {({ state }) => (
         <>
@@ -106,5 +110,6 @@ export function TrackingBalanceMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

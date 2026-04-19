@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { AnimatedLoading } from '@actual-app/components/icons/AnimatedLoading';
 import { SpaceBetween } from '@actual-app/components/space-between';
@@ -97,6 +100,7 @@ export function UnmigrateBudgetAutomationsModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="category-automations-unmigrate"
       containerProps={{
@@ -181,5 +185,6 @@ export function UnmigrateBudgetAutomationsModal({
         </SpaceBetween>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

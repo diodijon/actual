@@ -1,4 +1,6 @@
 import { Fragment, useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { ComponentProps, CSSProperties } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -104,6 +106,7 @@ export function AccountMenuModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="account-menu"
       onClose={onClose}
@@ -193,6 +196,7 @@ export function AccountMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }
 

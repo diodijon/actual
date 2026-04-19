@@ -1,4 +1,6 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -29,6 +31,7 @@ export function ConfirmDeleteModal({
     : {};
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="confirm-delete">
       {({ state }) => (
         <>
@@ -70,5 +73,6 @@ export function ConfirmDeleteModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

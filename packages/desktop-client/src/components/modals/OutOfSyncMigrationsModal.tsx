@@ -1,6 +1,9 @@
 import React from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { Paragraph } from '@actual-app/components/paragraph';
 import { Text } from '@actual-app/components/text';
@@ -22,6 +25,7 @@ export function OutOfSyncMigrationsModal() {
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="out-of-sync-migrations">
       {({ state }) => (
         <>
@@ -87,5 +91,6 @@ export function OutOfSyncMigrationsModal() {
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

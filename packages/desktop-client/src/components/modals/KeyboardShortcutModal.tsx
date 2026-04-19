@@ -2,6 +2,9 @@ import { useMemo, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { SvgArrowLeft } from '@actual-app/components/icons/v1';
 import { InitialFocus } from '@actual-app/components/initial-focus';
@@ -458,6 +461,7 @@ export function KeyboardShortcutModal() {
   const showingShortcuts = isSearching || isInCategory;
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="keyboard-shortcuts" containerProps={{ style: { width: 700 } }}>
       {({ state }) => (
         <>
@@ -595,5 +599,6 @@ export function KeyboardShortcutModal() {
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

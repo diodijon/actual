@@ -1,5 +1,7 @@
 // @ts-strict-ignore
 import { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { FormEvent } from 'react';
 import { Form } from 'react-aria-components';
 import { Trans, useTranslation } from 'react-i18next';
@@ -81,6 +83,7 @@ export function CreateLocalAccountModal() {
     }
   };
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="add-local-account">
       {({ state }) => (
         <>
@@ -206,5 +209,6 @@ export function CreateLocalAccountModal() {
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import { Select } from '@actual-app/components/select';
 import { SpaceBetween } from '@actual-app/components/space-between';
@@ -98,6 +101,7 @@ export function TransferOwnership({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="transfer-ownership">
       {({ state: { close } }: { state: { close: () => void } }) => (
         <>
@@ -217,5 +221,6 @@ export function TransferOwnership({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

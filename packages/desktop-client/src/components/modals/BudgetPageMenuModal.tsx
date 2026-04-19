@@ -1,4 +1,6 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -28,6 +30,7 @@ export function BudgetPageMenuModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="budget-page-menu">
       {({ state }) => (
         <>
@@ -44,6 +47,7 @@ export function BudgetPageMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }
 

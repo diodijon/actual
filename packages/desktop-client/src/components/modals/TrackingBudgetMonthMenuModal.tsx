@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import {
   SvgCheveronDown,
@@ -66,6 +69,7 @@ export function TrackingBudgetMonthMenuModal({
   const displayMonth = monthUtils.format(month, "MMMM ''yy", locale);
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="tracking-budget-month-menu"
       containerProps={{
@@ -218,5 +222,6 @@ export function TrackingBudgetMonthMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

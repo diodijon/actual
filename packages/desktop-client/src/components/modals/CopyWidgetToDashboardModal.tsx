@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { ComponentProps } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -27,6 +29,7 @@ export function CopyWidgetToDashboardModal({
   );
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="copy-widget-to-dashboard">
       {({ state }) => (
         <>
@@ -65,5 +68,6 @@ export function CopyWidgetToDashboardModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

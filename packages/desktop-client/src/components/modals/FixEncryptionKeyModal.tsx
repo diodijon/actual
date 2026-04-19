@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { Form } from 'react-aria-components';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button, ButtonWithLoading } from '@actual-app/components/button';
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
 import { InitialFocus } from '@actual-app/components/initial-focus';
@@ -62,6 +65,7 @@ export function FixEncryptionKeyModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="fix-encryption-key">
       {({ state }) => (
         <>
@@ -182,5 +186,6 @@ export function FixEncryptionKeyModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

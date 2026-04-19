@@ -1,4 +1,6 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useTranslation } from 'react-i18next';
 
 import { theme } from '@actual-app/components/theme';
@@ -19,6 +21,7 @@ export function EditRuleModal({
   const { t } = useTranslation();
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="edit-rule">
       {({ state }) => (
         <>
@@ -47,5 +50,6 @@ export function EditRuleModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

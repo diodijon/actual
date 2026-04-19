@@ -1,4 +1,6 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -48,6 +50,7 @@ export function ConfirmPayeesMergeModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="confirm-payees-merge">
       {({ state }) => (
         <>
@@ -110,5 +113,6 @@ export function ConfirmPayeesMergeModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

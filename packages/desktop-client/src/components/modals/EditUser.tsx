@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -123,6 +125,7 @@ export function EditUserFinanceApp({
   const { saveUser } = useSaveUser();
   const isExistingUser = 'id' in defaultUser && !!defaultUser.id;
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="edit-user">
       {({ state }) => (
         <>
@@ -148,6 +151,7 @@ export function EditUserFinanceApp({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }
 

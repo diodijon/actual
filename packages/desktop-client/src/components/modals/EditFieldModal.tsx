@@ -1,4 +1,6 @@
 import { useRef, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { CSSProperties, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -258,6 +260,7 @@ export function EditFieldModal({
   }
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="edit-field"
       noAnimation={!isNarrowWidth}
@@ -299,5 +302,6 @@ export function EditFieldModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

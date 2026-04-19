@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Button } from '@actual-app/components/button';
 import {
   SvgCheveronDown,
@@ -66,6 +69,7 @@ export function EnvelopeBudgetMonthMenuModal({
   const { t } = useTranslation();
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="envelope-budget-month-menu"
       containerProps={{
@@ -228,5 +232,6 @@ export function EnvelopeBudgetMonthMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

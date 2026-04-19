@@ -1,4 +1,6 @@
 import React from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useTranslation } from 'react-i18next';
 
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
@@ -33,6 +35,7 @@ export function AccountAutocompleteModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="account-autocomplete"
       noAnimation={!isNarrowWidth}
@@ -92,5 +95,6 @@ export function AccountAutocompleteModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

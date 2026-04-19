@@ -1,4 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { CSSProperties } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -362,6 +364,7 @@ export function BudgetAutomationsModal({ categoryId }: { categoryId: string }) {
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="category-automations-edit"
       containerProps={{
@@ -461,5 +464,6 @@ export function BudgetAutomationsModal({ categoryId }: { categoryId: string }) {
         </SpaceBetween>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

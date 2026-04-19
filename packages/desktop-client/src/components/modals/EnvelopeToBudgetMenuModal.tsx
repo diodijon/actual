@@ -1,6 +1,9 @@
 import React from 'react';
 import type { CSSProperties } from 'react';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { styles } from '@actual-app/components/styles';
 import { theme } from '@actual-app/components/theme';
 
@@ -29,6 +32,7 @@ export function EnvelopeToBudgetMenuModal({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="envelope-summary-to-budget-menu">
       {({ state }) => (
         <>
@@ -48,5 +52,6 @@ export function EnvelopeToBudgetMenuModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

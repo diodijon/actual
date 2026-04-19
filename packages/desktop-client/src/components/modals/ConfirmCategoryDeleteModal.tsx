@@ -1,5 +1,7 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next'; // Import useTranslation
 
 import { Block } from '@actual-app/components/block';
@@ -62,6 +64,7 @@ export function ConfirmCategoryDeleteModal({
   const isIncome = !!(category || group).is_income;
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal
       name="confirm-category-delete"
       containerProps={{ style: { width: '30vw' } }}
@@ -183,5 +186,6 @@ export function ConfirmCategoryDeleteModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

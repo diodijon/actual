@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
 import { ManageRules } from '#components/ManageRules';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -16,6 +19,7 @@ export function ManageRulesModal({ payeeId }: ManageRulesModalProps) {
   const [loading, setLoading] = useState(true);
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="manage-rules" isLoading={loading}>
       {({ state }) => (
         <>
@@ -27,5 +31,6 @@ export function ManageRulesModal({ payeeId }: ManageRulesModalProps) {
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Dialog, DialogTrigger } from 'react-aria-components';
 import { Trans, useTranslation } from 'react-i18next';
 
@@ -329,6 +331,7 @@ export function CreateAccountModal({
     !multiuserEnabled || hasPermission(Permissions.ADMINISTRATOR);
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <Modal name="add-account">
       {({ state }) => (
         <>
@@ -624,5 +627,6 @@ export function CreateAccountModal({
         </>
       )}
     </Modal>
+    </ErrorBoundary>
   );
 }
