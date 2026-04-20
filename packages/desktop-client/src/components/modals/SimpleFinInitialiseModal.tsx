@@ -1,9 +1,7 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { ButtonWithLoading } from '@actual-app/components/button';
 import { Input } from '@actual-app/components/input';
@@ -20,6 +18,7 @@ import {
   ModalCloseButton,
   ModalHeader,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FormField, FormLabel } from '#components/forms';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
@@ -63,61 +62,61 @@ export const SimpleFinInitialiseModal = ({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="simplefin-init" containerProps={{ style: { width: 300 } }}>
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Set-up SimpleFIN')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ display: 'flex', gap: 10 }}>
-            <Text>
-              <Trans>
-                In order to enable bank sync via SimpleFIN (only for North
-                American banks), you will need to create a token. This can be
-                done by creating an account with{' '}
-                <Link
-                  variant="external"
-                  to="https://bridge.simplefin.org/"
-                  linkColor="purple"
-                >
-                  SimpleFIN
-                </Link>
-                .
-              </Trans>
-            </Text>
+      <Modal name="simplefin-init" containerProps={{ style: { width: 300 } }}>
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Set-up SimpleFIN')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ display: 'flex', gap: 10 }}>
+              <Text>
+                <Trans>
+                  In order to enable bank sync via SimpleFIN (only for North
+                  American banks), you will need to create a token. This can be
+                  done by creating an account with{' '}
+                  <Link
+                    variant="external"
+                    to="https://bridge.simplefin.org/"
+                    linkColor="purple"
+                  >
+                    SimpleFIN
+                  </Link>
+                  .
+                </Trans>
+              </Text>
 
-            <FormField>
-              <FormLabel title={t('Token:')} htmlFor="token-field" />
-              <Input
-                id="token-field"
-                type="password"
-                value={token}
-                onChangeValue={value => {
-                  setToken(value);
-                  setIsValid(true);
+              <FormField>
+                <FormLabel title={t('Token:')} htmlFor="token-field" />
+                <Input
+                  id="token-field"
+                  type="password"
+                  value={token}
+                  onChangeValue={value => {
+                    setToken(value);
+                    setIsValid(true);
+                  }}
+                />
+              </FormField>
+
+              {!isValid && <Error>{error}</Error>}
+            </View>
+
+            <ModalButtons>
+              <ButtonWithLoading
+                variant="primary"
+                autoFocus
+                isLoading={isLoading}
+                onPress={() => {
+                  void onSubmit(() => state.close());
                 }}
-              />
-            </FormField>
-
-            {!isValid && <Error>{error}</Error>}
-          </View>
-
-          <ModalButtons>
-            <ButtonWithLoading
-              variant="primary"
-              autoFocus
-              isLoading={isLoading}
-              onPress={() => {
-                void onSubmit(() => state.close());
-              }}
-            >
-              <Trans>Save and continue</Trans>
-            </ButtonWithLoading>
-          </ModalButtons>
-        </>
-      )}
-    </Modal>
+              >
+                <Trans>Save and continue</Trans>
+              </ButtonWithLoading>
+            </ModalButtons>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 };

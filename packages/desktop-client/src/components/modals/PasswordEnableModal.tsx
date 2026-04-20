@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { Label } from '@actual-app/components/label';
@@ -15,6 +13,7 @@ import * as asyncStorage from '@actual-app/core/platform/server/asyncStorage';
 import { closeBudget } from '#budgetfiles/budgetfilesSlice';
 import { Error as ErrorAlert } from '#components/alerts';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FormField } from '#components/forms';
 import {
   ConfirmOldPasswordForm,
@@ -75,80 +74,82 @@ export function PasswordEnableModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="enable-password-auth">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Revert to server password')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
+      <Modal name="enable-password-auth">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Revert to server password')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
 
-          <View style={{ flexDirection: 'column' }}>
-            <FormField style={{ flex: 1 }}>
-              {!availableLoginMethods.some(
-                login => login.method === 'password',
-              ) && (
-                <ConfirmPasswordForm
-                  buttons={
-                    <Button
-                      variant="bare"
-                      style={{ fontSize: 15, marginRight: 10 }}
-                      onPress={() => dispatch(popModal())}
-                    >
-                      <Trans>Cancel</Trans>
-                    </Button>
-                  }
-                  onSetPassword={onSetPassword}
-                  onError={(error: string) => setError(getErrorMessage(error))}
-                />
-              )}
-              {availableLoginMethods.some(
-                login => login.method === 'password',
-              ) && (
-                <ConfirmOldPasswordForm
-                  buttons={
-                    <Button
-                      variant="bare"
-                      style={{ fontSize: 15, marginRight: 10 }}
-                      onPress={() => dispatch(popModal())}
-                    >
-                      <Trans>Cancel</Trans>
-                    </Button>
-                  }
-                  onSetPassword={onSetPassword}
-                />
-              )}
-            </FormField>
-            <Label
-              style={{
-                ...styles.verySmallText,
-                color: theme.pageTextLight,
-                paddingTop: 5,
-              }}
-              title={t('Type the server password to disable OpenID')}
-            />
-            <Label
-              style={{
-                ...styles.verySmallText,
-                color: theme.pageTextLight,
-                paddingTop: 5,
-              }}
-              title={t('After disabling OpenID all sessions will be closed')}
-            />
-            {multiuserEnabled && (
+            <View style={{ flexDirection: 'column' }}>
+              <FormField style={{ flex: 1 }}>
+                {!availableLoginMethods.some(
+                  login => login.method === 'password',
+                ) && (
+                  <ConfirmPasswordForm
+                    buttons={
+                      <Button
+                        variant="bare"
+                        style={{ fontSize: 15, marginRight: 10 }}
+                        onPress={() => dispatch(popModal())}
+                      >
+                        <Trans>Cancel</Trans>
+                      </Button>
+                    }
+                    onSetPassword={onSetPassword}
+                    onError={(error: string) =>
+                      setError(getErrorMessage(error))
+                    }
+                  />
+                )}
+                {availableLoginMethods.some(
+                  login => login.method === 'password',
+                ) && (
+                  <ConfirmOldPasswordForm
+                    buttons={
+                      <Button
+                        variant="bare"
+                        style={{ fontSize: 15, marginRight: 10 }}
+                        onPress={() => dispatch(popModal())}
+                      >
+                        <Trans>Cancel</Trans>
+                      </Button>
+                    }
+                    onSetPassword={onSetPassword}
+                  />
+                )}
+              </FormField>
               <Label
                 style={{
                   ...styles.verySmallText,
-                  color: theme.errorText,
+                  color: theme.pageTextLight,
+                  paddingTop: 5,
                 }}
-                title={t('Multi-user will not work after disabling')}
+                title={t('Type the server password to disable OpenID')}
               />
-            )}
-            {error && <ErrorAlert>{error}</ErrorAlert>}
-          </View>
-        </>
-      )}
-    </Modal>
+              <Label
+                style={{
+                  ...styles.verySmallText,
+                  color: theme.pageTextLight,
+                  paddingTop: 5,
+                }}
+                title={t('After disabling OpenID all sessions will be closed')}
+              />
+              {multiuserEnabled && (
+                <Label
+                  style={{
+                    ...styles.verySmallText,
+                    color: theme.errorText,
+                  }}
+                  title={t('Multi-user will not work after disabling')}
+                />
+              )}
+              {error && <ErrorAlert>{error}</ErrorAlert>}
+            </View>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

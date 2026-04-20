@@ -1,7 +1,6 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next'; // Import useTranslation
 
 import { Block } from '@actual-app/components/block';
@@ -13,6 +12,7 @@ import type { TransObjectLiteral } from '@actual-app/core/types/util';
 
 import { CategoryAutocomplete } from '#components/autocomplete/CategoryAutocomplete';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useCategories } from '#hooks/useCategories';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
@@ -65,127 +65,128 @@ export function ConfirmCategoryDeleteModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="confirm-category-delete"
-      containerProps={{ style: { width: '30vw' } }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Confirm Delete')} // Use translation for title
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ lineHeight: 1.5 }}>
-            {group ? (
-              <Block>
-                {!isIncome ? (
+      <Modal
+        name="confirm-category-delete"
+        containerProps={{ style: { width: '30vw' } }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Confirm Delete')} // Use translation for title
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ lineHeight: 1.5 }}>
+              {group ? (
+                <Block>
+                  {!isIncome ? (
+                    <Trans>
+                      Categories in the group{' '}
+                      <strong>
+                        {{ group: group.name } as TransObjectLiteral}
+                      </strong>{' '}
+                      are used by existing transactions.
+                    </Trans>
+                  ) : (
+                    <Trans>
+                      Categories in the group{' '}
+                      <strong>
+                        {{ group: group.name } as TransObjectLiteral}
+                      </strong>{' '}
+                      are used by existing transactions or it has a positive
+                      leftover balance currently.
+                    </Trans>
+                  )}
                   <Trans>
-                    Categories in the group{' '}
-                    <strong>
-                      {{ group: group.name } as TransObjectLiteral}
-                    </strong>{' '}
-                    are used by existing transactions.
+                    <strong>Are you sure you want to delete it?</strong> If so,
+                    you must select another category to transfer existing
+                    transactions and balance to.
                   </Trans>
-                ) : (
+                </Block>
+              ) : (
+                <Block>
+                  {!isIncome ? (
+                    <Trans>
+                      <strong>
+                        {{ category: category.name } as TransObjectLiteral}
+                      </strong>{' '}
+                      is used by existing transactions.
+                    </Trans>
+                  ) : (
+                    <Trans>
+                      <strong>
+                        {{ category: category.name } as TransObjectLiteral}
+                      </strong>{' '}
+                      is used by existing transactions or it has a positive
+                      leftover balance currently.
+                    </Trans>
+                  )}
                   <Trans>
-                    Categories in the group{' '}
-                    <strong>
-                      {{ group: group.name } as TransObjectLiteral}
-                    </strong>{' '}
-                    are used by existing transactions or it has a positive
-                    leftover balance currently.
+                    <strong>Are you sure you want to delete it?</strong> If so,
+                    you must select another category to transfer existing
+                    transactions and balance to.
                   </Trans>
-                )}
-                <Trans>
-                  <strong>Are you sure you want to delete it?</strong> If so,
-                  you must select another category to transfer existing
-                  transactions and balance to.
-                </Trans>
-              </Block>
-            ) : (
-              <Block>
-                {!isIncome ? (
-                  <Trans>
-                    <strong>
-                      {{ category: category.name } as TransObjectLiteral}
-                    </strong>{' '}
-                    is used by existing transactions.
-                  </Trans>
-                ) : (
-                  <Trans>
-                    <strong>
-                      {{ category: category.name } as TransObjectLiteral}
-                    </strong>{' '}
-                    is used by existing transactions or it has a positive
-                    leftover balance currently.
-                  </Trans>
-                )}
-                <Trans>
-                  <strong>Are you sure you want to delete it?</strong> If so,
-                  you must select another category to transfer existing
-                  transactions and balance to.
-                </Trans>
-              </Block>
-            )}
+                </Block>
+              )}
 
-            {error && renderError(error)}
+              {error && renderError(error)}
 
-            <View
-              style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}
-            >
-              <Text>
-                <Trans>Transfer to:</Trans>
-              </Text>
-
-              <View style={{ flex: 1, marginLeft: 10, marginRight: 30 }}>
-                <CategoryAutocomplete
-                  categoryGroups={
-                    group
-                      ? categoryGroups.filter(
-                          g => g.id !== group.id && !!g.is_income === isIncome,
-                        )
-                      : categoryGroups
-                          .filter(g => !!g.is_income === isIncome)
-                          .map(g => ({
-                            ...g,
-                            categories: g.categories.filter(
-                              c => c.id !== category.id,
-                            ),
-                          }))
-                  }
-                  value={transferCategory}
-                  focused
-                  inputProps={{
-                    placeholder: t('Select category...'),
-                  }}
-                  onSelect={category => setTransferCategory(category)}
-                  showHiddenCategories
-                />
-              </View>
-
-              <Button
-                variant="primary"
-                onPress={() => {
-                  if (!transferCategory) {
-                    setError('required-transfer');
-                  } else {
-                    onDelete(transferCategory);
-                    state.close();
-                  }
+              <View
+                style={{
+                  marginTop: 20,
+                  flexDirection: 'row',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
                 }}
               >
-                <Trans>Delete</Trans>
-              </Button>
+                <Text>
+                  <Trans>Transfer to:</Trans>
+                </Text>
+
+                <View style={{ flex: 1, marginLeft: 10, marginRight: 30 }}>
+                  <CategoryAutocomplete
+                    categoryGroups={
+                      group
+                        ? categoryGroups.filter(
+                            g =>
+                              g.id !== group.id && !!g.is_income === isIncome,
+                          )
+                        : categoryGroups
+                            .filter(g => !!g.is_income === isIncome)
+                            .map(g => ({
+                              ...g,
+                              categories: g.categories.filter(
+                                c => c.id !== category.id,
+                              ),
+                            }))
+                    }
+                    value={transferCategory}
+                    focused
+                    inputProps={{
+                      placeholder: t('Select category...'),
+                    }}
+                    onSelect={category => setTransferCategory(category)}
+                    showHiddenCategories
+                  />
+                </View>
+
+                <Button
+                  variant="primary"
+                  onPress={() => {
+                    if (!transferCategory) {
+                      setError('required-transfer');
+                    } else {
+                      onDelete(transferCategory);
+                      state.close();
+                    }
+                  }}
+                >
+                  <Trans>Delete</Trans>
+                </Button>
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

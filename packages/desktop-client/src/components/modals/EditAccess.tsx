@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -14,6 +13,7 @@ import { send } from '@actual-app/core/platform/client/connection';
 import { getUserAccessErrors } from '@actual-app/core/shared/errors';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FormField, FormLabel } from '#components/forms';
 import { popModal } from '#modals/modalsSlice';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -93,23 +93,35 @@ export function EditUserAccess({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="edit-access">
-      {({ state: { close } }: { state: { close: () => void } }) => (
-        <>
-          <ModalHeader
-            title={t('User Access')}
-            rightContent={<ModalCloseButton onPress={close} />}
-          />
-          <SpaceBetween style={{ marginTop: 10 }}>
-            <FormField style={{ flex: 1 }}>
-              <FormLabel title={t('User')} htmlFor="user-field" />
-              {availableUsers.length > 0 && (
-                <View>
-                  <Select
-                    options={availableUsers}
-                    onChange={(newValue: string) => setUserId(newValue)}
-                    value={userId}
-                  />
+      <Modal name="edit-access">
+        {({ state: { close } }: { state: { close: () => void } }) => (
+          <>
+            <ModalHeader
+              title={t('User Access')}
+              rightContent={<ModalCloseButton onPress={close} />}
+            />
+            <SpaceBetween style={{ marginTop: 10 }}>
+              <FormField style={{ flex: 1 }}>
+                <FormLabel title={t('User')} htmlFor="user-field" />
+                {availableUsers.length > 0 && (
+                  <View>
+                    <Select
+                      options={availableUsers}
+                      onChange={(newValue: string) => setUserId(newValue)}
+                      value={userId}
+                    />
+                    <Text
+                      style={{
+                        ...styles.verySmallText,
+                        color: theme.pageTextLight,
+                        marginTop: 5,
+                      }}
+                    >
+                      <Trans>Select a user from the directory</Trans>
+                    </Text>
+                  </View>
+                )}
+                {availableUsers.length === 0 && (
                   <Text
                     style={{
                       ...styles.verySmallText,
@@ -117,46 +129,34 @@ export function EditUserAccess({
                       marginTop: 5,
                     }}
                   >
-                    <Trans>Select a user from the directory</Trans>
+                    <Trans>No users available to give access</Trans>
                   </Text>
-                </View>
-              )}
-              {availableUsers.length === 0 && (
-                <Text
-                  style={{
-                    ...styles.verySmallText,
-                    color: theme.pageTextLight,
-                    marginTop: 5,
-                  }}
-                >
-                  <Trans>No users available to give access</Trans>
-                </Text>
-              )}
-            </FormField>
-          </SpaceBetween>
+                )}
+              </FormField>
+            </SpaceBetween>
 
-          <SpaceBetween
-            gap={10}
-            style={{
-              marginTop: 20,
-              justifyContent: 'flex-end',
-            }}
-          >
-            {error && <Text style={{ color: theme.errorText }}>{error}</Text>}
-            <Button variant="bare" onPress={() => dispatch(popModal())}>
-              <Trans>Cancel</Trans>
-            </Button>
-            <Button
-              variant="primary"
-              isDisabled={availableUsers.length === 0}
-              onPress={() => onSave(close)}
+            <SpaceBetween
+              gap={10}
+              style={{
+                marginTop: 20,
+                justifyContent: 'flex-end',
+              }}
             >
-              {defaultUserAccess.userId ? t('Save') : t('Add')}
-            </Button>
-          </SpaceBetween>
-        </>
-      )}
-    </Modal>
+              {error && <Text style={{ color: theme.errorText }}>{error}</Text>}
+              <Button variant="bare" onPress={() => dispatch(popModal())}>
+                <Trans>Cancel</Trans>
+              </Button>
+              <Button
+                variant="primary"
+                isDisabled={availableUsers.length === 0}
+                onPress={() => onSave(close)}
+              >
+                {defaultUserAccess.userId ? t('Save') : t('Add')}
+              </Button>
+            </SpaceBetween>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

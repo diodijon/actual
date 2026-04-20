@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
@@ -9,6 +10,7 @@ import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { pushModal } from '#modals/modalsSlice';
 import { useDispatch } from '#redux';
 
@@ -52,52 +54,54 @@ export function ImportModal() {
   };
 
   return (
-    <Modal name="import" containerProps={{ style: { width: 400 } }}>
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Import From')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ ...styles.smallText, lineHeight: 1.5 }}>
-            {error && (
-              <Block style={{ color: theme.errorText, marginBottom: 15 }}>
-                {getErrorMessage(error)}
-              </Block>
-            )}
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
+      <Modal name="import" containerProps={{ style: { width: 400 } }}>
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Import From')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ ...styles.smallText, lineHeight: 1.5 }}>
+              {error && (
+                <Block style={{ color: theme.errorText, marginBottom: 15 }}>
+                  {getErrorMessage(error)}
+                </Block>
+              )}
 
-            <Text style={{ marginBottom: 15 }}>
-              <Trans>
-                Select an app to import from, and we'll guide you through the
-                process.
-              </Trans>
-            </Text>
+              <Text style={{ marginBottom: 15 }}>
+                <Trans>
+                  Select an app to import from, and we'll guide you through the
+                  process.
+                </Trans>
+              </Text>
 
-            <Button style={itemStyle} onPress={() => onSelectType('ynab4')}>
-              <span style={{ fontWeight: 700 }}>YNAB4</span>
-              <View style={{ color: theme.pageTextLight }}>
-                <Trans>The old unsupported desktop app</Trans>
-              </View>
-            </Button>
-            <Button style={itemStyle} onPress={() => onSelectType('ynab5')}>
-              <span style={{ fontWeight: 700 }}>nYNAB</span>
-              <View style={{ color: theme.pageTextLight }}>
-                <div>
-                  <Trans>The newer web app</Trans>
-                </div>
-              </View>
-            </Button>
-            <Button style={itemStyle} onPress={() => onSelectType('actual')}>
-              <span style={{ fontWeight: 700 }}>Actual</span>
-              <View style={{ color: theme.pageTextLight }}>
-                <div>
-                  <Trans>Import a file exported from Actual</Trans>
-                </div>
-              </View>
-            </Button>
-          </View>
-        </>
-      )}
-    </Modal>
+              <Button style={itemStyle} onPress={() => onSelectType('ynab4')}>
+                <span style={{ fontWeight: 700 }}>YNAB4</span>
+                <View style={{ color: theme.pageTextLight }}>
+                  <Trans>The old unsupported desktop app</Trans>
+                </View>
+              </Button>
+              <Button style={itemStyle} onPress={() => onSelectType('ynab5')}>
+                <span style={{ fontWeight: 700 }}>nYNAB</span>
+                <View style={{ color: theme.pageTextLight }}>
+                  <div>
+                    <Trans>The newer web app</Trans>
+                  </div>
+                </View>
+              </Button>
+              <Button style={itemStyle} onPress={() => onSelectType('actual')}>
+                <span style={{ fontWeight: 700 }}>Actual</span>
+                <View style={{ color: theme.pageTextLight }}>
+                  <div>
+                    <Trans>Import a file exported from Actual</Trans>
+                  </div>
+                </View>
+              </Button>
+            </View>
+          </>
+        )}
+      </Modal>
+    </ErrorBoundary>
   );
 }

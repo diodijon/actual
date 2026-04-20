@@ -1,9 +1,8 @@
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
-
 import { ModalHeader, ModalTitle } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { Modal } from '#modals/modalsSlice';
 
 import { SingleInputModal } from './SingleInputModal';
@@ -20,21 +19,21 @@ export function NewCategoryGroupModal({
   const { t } = useTranslation();
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <SingleInputModal
-      name="new-category-group"
-      Header={props => (
-        <ModalHeader
-          {...props}
-          title={
-            <ModalTitle title={t('New Category Group')} shrinkOnOverflow />
-          }
-        />
-      )}
-      inputPlaceholder={t('Category group name')}
-      buttonText={t('Add')}
-      onValidate={onValidate}
-      onSubmit={onSubmit}
-    />
+      <SingleInputModal
+        name="new-category-group"
+        Header={props => (
+          <ModalHeader
+            {...props}
+            title={
+              <ModalTitle title={t('New Category Group')} shrinkOnOverflow />
+            }
+          />
+        )}
+        inputPlaceholder={t('Category group name')}
+        buttonText={t('Add')}
+        onValidate={onValidate}
+        onSubmit={onSubmit}
+      />
     </ErrorBoundary>
   );
 }

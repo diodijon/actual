@@ -1,5 +1,6 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
@@ -11,6 +12,7 @@ import { View } from '@actual-app/components/view';
 
 import { importBudget } from '#budgetfiles/budgetfilesSlice';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useNavigate } from '#hooks/useNavigate';
 import { useDispatch } from '#redux';
 
@@ -66,51 +68,55 @@ export function ImportActualModal() {
   }
 
   return (
-    <Modal name="import-actual" containerProps={{ style: { width: 400 } }}>
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Import from Actual export')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ ...styles.smallText, lineHeight: 1.5, marginTop: 20 }}>
-            {error && (
-              <Block style={{ color: theme.errorText, marginBottom: 15 }}>
-                {getErrorMessage(error)}
-              </Block>
-            )}
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
+      <Modal name="import-actual" containerProps={{ style: { width: 400 } }}>
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Import from Actual export')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View
+              style={{ ...styles.smallText, lineHeight: 1.5, marginTop: 20 }}
+            >
+              {error && (
+                <Block style={{ color: theme.errorText, marginBottom: 15 }}>
+                  {getErrorMessage(error)}
+                </Block>
+              )}
 
-            <View style={{ '& > div': { lineHeight: '1.7em' } }}>
-              <Paragraph>
-                <Trans>
-                  You can import data from another Actual account or instance.
-                  First export your data from a different account, and it will
-                  give you a compressed file. This file is a simple zip file
-                  that contains the <code>db.sqlite</code> and{' '}
-                  <code>metadata.json</code> files.
-                </Trans>
-              </Paragraph>
+              <View style={{ '& > div': { lineHeight: '1.7em' } }}>
+                <Paragraph>
+                  <Trans>
+                    You can import data from another Actual account or instance.
+                    First export your data from a different account, and it will
+                    give you a compressed file. This file is a simple zip file
+                    that contains the <code>db.sqlite</code> and{' '}
+                    <code>metadata.json</code> files.
+                  </Trans>
+                </Paragraph>
 
-              <Paragraph>
-                <Trans>
-                  Select one of these compressed files and import it here.
-                </Trans>
-              </Paragraph>
+                <Paragraph>
+                  <Trans>
+                    Select one of these compressed files and import it here.
+                  </Trans>
+                </Paragraph>
 
-              <View style={{ alignSelf: 'center' }}>
-                <ButtonWithLoading
-                  variant="primary"
-                  autoFocus
-                  isLoading={importing}
-                  onPress={onImport}
-                >
-                  <Trans>Select file...</Trans>
-                </ButtonWithLoading>
+                <View style={{ alignSelf: 'center' }}>
+                  <ButtonWithLoading
+                    variant="primary"
+                    autoFocus
+                    isLoading={importing}
+                    onPress={onImport}
+                  >
+                    <Trans>Select file...</Trans>
+                  </ButtonWithLoading>
+                </View>
               </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
+    </ErrorBoundary>
   );
 }

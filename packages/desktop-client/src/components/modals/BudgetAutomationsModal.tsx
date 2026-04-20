@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { CSSProperties } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -26,6 +25,7 @@ import { DEFAULT_PRIORITY } from '#components/budget/goals/reducer';
 import { useBudgetAutomationCategories } from '#components/budget/goals/useBudgetAutomationCategories';
 import { Link } from '#components/common/Link';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useBudgetAutomations } from '#hooks/useBudgetAutomations';
 import { useCategory } from '#hooks/useCategory';
 import { useNotes } from '#hooks/useNotes';
@@ -365,105 +365,107 @@ export function BudgetAutomationsModal({ categoryId }: { categoryId: string }) {
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="category-automations-edit"
-      containerProps={{
-        style: { width: 850, height: 650, paddingBottom: 20 },
-      }}
-    >
-      {({ state }) => (
-        <SpaceBetween
-          direction="vertical"
-          wrap={false}
-          align="stretch"
-          style={{ height: '100%' }}
-        >
-          <ModalHeader
-            title={t('Budget automations: {{category}}', {
-              category: currentCategory?.name,
-            })}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          {loading ? (
-            <View
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <AnimatedLoading style={{ width: 20, height: 20 }} />
-            </View>
-          ) : (
-            <SpaceBetween align="stretch" direction="vertical" wrap={false}>
-              {needsMigration && (
-                <BudgetAutomationMigrationWarning
-                  categoryId={categoryId}
-                  style={{ flexShrink: 0 }}
-                />
-              )}
-              <BudgetAutomationList
-                automations={automations[categoryId] || []}
-                setAutomations={(
-                  cb: (prev: AutomationEntry[]) => AutomationEntry[],
-                ) => {
-                  setAutomations(prev => ({
-                    ...prev,
-                    [categoryId]: cb(prev[categoryId] || []),
-                  }));
-                }}
-                schedules={schedules}
-                categories={categories}
-              />
-            </SpaceBetween>
-          )}
-          <View style={{ flexGrow: 1 }} />
+      <Modal
+        name="category-automations-edit"
+        containerProps={{
+          style: { width: 850, height: 650, paddingBottom: 20 },
+        }}
+      >
+        {({ state }) => (
           <SpaceBetween
-            style={{
-              marginTop: 20,
-              justifyContent: 'flex-end',
-              flexShrink: 0,
-            }}
+            direction="vertical"
+            wrap={false}
+            align="stretch"
+            style={{ height: '100%' }}
           >
-            {!needsMigration && (
-              <Link
-                variant="text"
-                onClick={() => {
-                  const templates = automations[categoryId] || [];
-                  dispatch(
-                    pushModal({
-                      modal: {
-                        name: 'category-automations-unmigrate',
-                        options: {
-                          categoryId,
-                          templates: templates.map(({ template }) => template),
-                        },
-                      },
-                    }),
-                  );
+            <ModalHeader
+              title={t('Budget automations: {{category}}', {
+                category: currentCategory?.name,
+              })}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            {loading ? (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                <Trans>Un-migrate</Trans>
-              </Link>
+                <AnimatedLoading style={{ width: 20, height: 20 }} />
+              </View>
+            ) : (
+              <SpaceBetween align="stretch" direction="vertical" wrap={false}>
+                {needsMigration && (
+                  <BudgetAutomationMigrationWarning
+                    categoryId={categoryId}
+                    style={{ flexShrink: 0 }}
+                  />
+                )}
+                <BudgetAutomationList
+                  automations={automations[categoryId] || []}
+                  setAutomations={(
+                    cb: (prev: AutomationEntry[]) => AutomationEntry[],
+                  ) => {
+                    setAutomations(prev => ({
+                      ...prev,
+                      [categoryId]: cb(prev[categoryId] || []),
+                    }));
+                  }}
+                  schedules={schedules}
+                  categories={categories}
+                />
+              </SpaceBetween>
             )}
-            {/* <View style={{ flex: 1 }} /> */}
-            <Button onPress={() => state.close()}>
-              <Trans>Cancel</Trans>
-            </Button>
-            <Button
-              variant="primary"
-              onPress={() => onSave(() => state.close())}
+            <View style={{ flexGrow: 1 }} />
+            <SpaceBetween
+              style={{
+                marginTop: 20,
+                justifyContent: 'flex-end',
+                flexShrink: 0,
+              }}
             >
-              <Trans>Save</Trans>
-            </Button>
+              {!needsMigration && (
+                <Link
+                  variant="text"
+                  onClick={() => {
+                    const templates = automations[categoryId] || [];
+                    dispatch(
+                      pushModal({
+                        modal: {
+                          name: 'category-automations-unmigrate',
+                          options: {
+                            categoryId,
+                            templates: templates.map(
+                              ({ template }) => template,
+                            ),
+                          },
+                        },
+                      }),
+                    );
+                  }}
+                >
+                  <Trans>Un-migrate</Trans>
+                </Link>
+              )}
+              {/* <View style={{ flex: 1 }} /> */}
+              <Button onPress={() => state.close()}>
+                <Trans>Cancel</Trans>
+              </Button>
+              <Button
+                variant="primary"
+                onPress={() => onSave(() => state.close())}
+              >
+                <Trans>Save</Trans>
+              </Button>
+            </SpaceBetween>
           </SpaceBetween>
-        </SpaceBetween>
-      )}
-    </Modal>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

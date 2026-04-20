@@ -1,9 +1,7 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { ButtonWithLoading } from '@actual-app/components/button';
 import { InitialFocus } from '@actual-app/components/initial-focus';
@@ -21,6 +19,7 @@ import {
   ModalCloseButton,
   ModalHeader,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FormField, FormLabel } from '#components/forms';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
@@ -85,75 +84,81 @@ export const GoCardlessInitialiseModal = ({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="gocardless-init" containerProps={{ style: { width: '30vw' } }}>
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Set up GoCardless')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ display: 'flex', gap: 10 }}>
-            <Text>
-              <Trans>
-                In order to enable bank sync via GoCardless (only for EU banks)
-                you will need to create access credentials. This can be done by
-                creating an account with{' '}
-                <Link
-                  variant="external"
-                  to="https://actualbudget.org/docs/advanced/bank-sync/"
-                  linkColor="purple"
-                >
-                  GoCardless
-                </Link>
-                .
-              </Trans>
-            </Text>
+      <Modal
+        name="gocardless-init"
+        containerProps={{ style: { width: '30vw' } }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Set up GoCardless')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ display: 'flex', gap: 10 }}>
+              <Text>
+                <Trans>
+                  In order to enable bank sync via GoCardless (only for EU
+                  banks) you will need to create access credentials. This can be
+                  done by creating an account with{' '}
+                  <Link
+                    variant="external"
+                    to="https://actualbudget.org/docs/advanced/bank-sync/"
+                    linkColor="purple"
+                  >
+                    GoCardless
+                  </Link>
+                  .
+                </Trans>
+              </Text>
 
-            <FormField>
-              <FormLabel title={t('Secret ID:')} htmlFor="secret-id-field" />
-              <InitialFocus>
+              <FormField>
+                <FormLabel title={t('Secret ID:')} htmlFor="secret-id-field" />
+                <InitialFocus>
+                  <Input
+                    id="secret-id-field"
+                    type="password"
+                    value={secretId}
+                    onChangeValue={value => {
+                      setSecretId(value);
+                      setIsValid(true);
+                    }}
+                  />
+                </InitialFocus>
+              </FormField>
+
+              <FormField>
+                <FormLabel
+                  title={t('Secret Key:')}
+                  htmlFor="secret-key-field"
+                />
                 <Input
-                  id="secret-id-field"
+                  id="secret-key-field"
                   type="password"
-                  value={secretId}
+                  value={secretKey}
                   onChangeValue={value => {
-                    setSecretId(value);
+                    setSecretKey(value);
                     setIsValid(true);
                   }}
                 />
-              </InitialFocus>
-            </FormField>
+              </FormField>
 
-            <FormField>
-              <FormLabel title={t('Secret Key:')} htmlFor="secret-key-field" />
-              <Input
-                id="secret-key-field"
-                type="password"
-                value={secretKey}
-                onChangeValue={value => {
-                  setSecretKey(value);
-                  setIsValid(true);
+              {!isValid && <Error>{error}</Error>}
+            </View>
+
+            <ModalButtons>
+              <ButtonWithLoading
+                variant="primary"
+                isLoading={isLoading}
+                onPress={() => {
+                  void onSubmit(() => state.close());
                 }}
-              />
-            </FormField>
-
-            {!isValid && <Error>{error}</Error>}
-          </View>
-
-          <ModalButtons>
-            <ButtonWithLoading
-              variant="primary"
-              isLoading={isLoading}
-              onPress={() => {
-                void onSubmit(() => state.close());
-              }}
-            >
-              <Trans>Save and continue</Trans>
-            </ButtonWithLoading>
-          </ModalButtons>
-        </>
-      )}
-    </Modal>
+              >
+                <Trans>Save and continue</Trans>
+              </ButtonWithLoading>
+            </ModalButtons>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 };

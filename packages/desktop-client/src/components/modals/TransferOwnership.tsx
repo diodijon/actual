@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { Select } from '@actual-app/components/select';
@@ -19,6 +17,7 @@ import type { Handlers } from '@actual-app/core/types/handlers';
 
 import { closeAndLoadBudget } from '#budgetfiles/budgetfilesSlice';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FormField, FormLabel } from '#components/forms';
 import { useMetadataPref } from '#hooks/useMetadataPref';
 import { popModal } from '#modals/modalsSlice';
@@ -102,26 +101,61 @@ export function TransferOwnership({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="transfer-ownership">
-      {({ state: { close } }: { state: { close: () => void } }) => (
-        <>
-          <ModalHeader
-            title={t('Transfer ownership')}
-            rightContent={<ModalCloseButton onPress={close} />}
-          />
-          <SpaceBetween style={{ marginTop: 10 }}>
-            <FormField style={{ flex: 1 }}>
-              <FormLabel title={t('User')} htmlFor="user-field" />
-              {availableUsers.length > 0 && (
-                <View>
-                  <Select
-                    options={availableUsers}
-                    onChange={(newValue: string) => {
-                      setUserId(newValue);
-                    }}
-                    value={userId}
-                    defaultLabel={t('Select a user')}
-                  />
+      <Modal name="transfer-ownership">
+        {({ state: { close } }: { state: { close: () => void } }) => (
+          <>
+            <ModalHeader
+              title={t('Transfer ownership')}
+              rightContent={<ModalCloseButton onPress={close} />}
+            />
+            <SpaceBetween style={{ marginTop: 10 }}>
+              <FormField style={{ flex: 1 }}>
+                <FormLabel title={t('User')} htmlFor="user-field" />
+                {availableUsers.length > 0 && (
+                  <View>
+                    <Select
+                      options={availableUsers}
+                      onChange={(newValue: string) => {
+                        setUserId(newValue);
+                      }}
+                      value={userId}
+                      defaultLabel={t('Select a user')}
+                    />
+                    <Text
+                      style={{
+                        ...styles.verySmallText,
+                        color: theme.pageTextLight,
+                        marginTop: 5,
+                      }}
+                    >
+                      <Trans>
+                        Select a user from the directory to designate as the new
+                        budget owner.
+                      </Trans>
+                    </Text>
+                    <Text
+                      style={{
+                        ...styles.verySmallText,
+                        color: theme.errorText,
+                        marginTop: 5,
+                      }}
+                    >
+                      {t(
+                        'This action is irreversible, ownership of this budget file will only be able to be transferred by the server administrator or new owner.',
+                      )}
+                    </Text>
+                    <Text
+                      style={{
+                        ...styles.verySmallText,
+                        color: theme.errorText,
+                        marginTop: 5,
+                      }}
+                    >
+                      <Trans>Proceed with caution.</Trans>
+                    </Text>
+                  </View>
+                )}
+                {availableUsers.length === 0 && (
                   <Text
                     style={{
                       ...styles.verySmallText,
@@ -129,98 +163,67 @@ export function TransferOwnership({
                       marginTop: 5,
                     }}
                   >
-                    <Trans>
-                      Select a user from the directory to designate as the new
-                      budget owner.
-                    </Trans>
+                    <Trans>No users available</Trans>
                   </Text>
-                  <Text
-                    style={{
-                      ...styles.verySmallText,
-                      color: theme.errorText,
-                      marginTop: 5,
-                    }}
-                  >
-                    {t(
-                      'This action is irreversible, ownership of this budget file will only be able to be transferred by the server administrator or new owner.',
-                    )}
-                  </Text>
-                  <Text
-                    style={{
-                      ...styles.verySmallText,
-                      color: theme.errorText,
-                      marginTop: 5,
-                    }}
-                  >
-                    <Trans>Proceed with caution.</Trans>
-                  </Text>
-                </View>
-              )}
-              {availableUsers.length === 0 && (
-                <Text
-                  style={{
-                    ...styles.verySmallText,
-                    color: theme.pageTextLight,
-                    marginTop: 5,
-                  }}
-                >
-                  <Trans>No users available</Trans>
-                </Text>
-              )}
-            </FormField>
-          </SpaceBetween>
+                )}
+              </FormField>
+            </SpaceBetween>
 
-          <SpaceBetween
-            style={{
-              marginTop: 20,
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-            }}
-          >
-            {error && <Text style={{ color: theme.errorText }}>{error}</Text>}
-            <Button
-              style={{ marginRight: 10 }}
-              onPress={() => dispatch(popModal())}
-            >
-              <Trans>Cancel</Trans>
-            </Button>
-
-            <Button
-              variant="primary"
-              isDisabled={
-                availableUsers.length === 0 || !userId || isTransferring
-              }
-              onPress={async () => {
-                setIsTransferring(true);
-                try {
-                  await onSave();
-                  await dispatch(
-                    closeAndLoadBudget({ fileId: (currentFile as Budget).id }),
-                  );
-                  close();
-                } catch {
-                  dispatch(
-                    addNotification({
-                      notification: {
-                        type: 'error',
-                        title: t('Failed to transfer ownership'),
-                        message: t(
-                          'Failed to complete ownership transfer. Please try again.',
-                        ),
-                        sticky: true,
-                      },
-                    }),
-                  );
-                  setIsTransferring(false);
-                }
+            <SpaceBetween
+              style={{
+                marginTop: 20,
+                justifyContent: 'flex-end',
+                alignItems: 'center',
               }}
             >
-              {isTransferring ? t('Transferring...') : t('Transfer ownership')}
-            </Button>
-          </SpaceBetween>
-        </>
-      )}
-    </Modal>
+              {error && <Text style={{ color: theme.errorText }}>{error}</Text>}
+              <Button
+                style={{ marginRight: 10 }}
+                onPress={() => dispatch(popModal())}
+              >
+                <Trans>Cancel</Trans>
+              </Button>
+
+              <Button
+                variant="primary"
+                isDisabled={
+                  availableUsers.length === 0 || !userId || isTransferring
+                }
+                onPress={async () => {
+                  setIsTransferring(true);
+                  try {
+                    await onSave();
+                    await dispatch(
+                      closeAndLoadBudget({
+                        fileId: (currentFile as Budget).id,
+                      }),
+                    );
+                    close();
+                  } catch {
+                    dispatch(
+                      addNotification({
+                        notification: {
+                          type: 'error',
+                          title: t('Failed to transfer ownership'),
+                          message: t(
+                            'Failed to complete ownership transfer. Please try again.',
+                          ),
+                          sticky: true,
+                        },
+                      }),
+                    );
+                    setIsTransferring(false);
+                  }
+                }}
+              >
+                {isTransferring
+                  ? t('Transferring...')
+                  : t('Transfer ownership')}
+              </Button>
+            </SpaceBetween>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

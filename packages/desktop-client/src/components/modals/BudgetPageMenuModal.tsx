@@ -1,7 +1,6 @@
 import React from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 
 import { Menu } from '@actual-app/components/menu';
@@ -9,6 +8,7 @@ import { styles } from '@actual-app/components/styles';
 import { theme } from '@actual-app/components/theme';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useLocalPref } from '#hooks/useLocalPref';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
@@ -31,22 +31,22 @@ export function BudgetPageMenuModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="budget-page-menu">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            showLogo
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <BudgetPageMenu
-            getItemStyle={() => defaultMenuItemStyle}
-            onAddCategoryGroup={onAddCategoryGroup}
-            onToggleHiddenCategories={onToggleHiddenCategories}
-            onSwitchBudgetFile={onSwitchBudgetFile}
-          />
-        </>
-      )}
-    </Modal>
+      <Modal name="budget-page-menu">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              showLogo
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <BudgetPageMenu
+              getItemStyle={() => defaultMenuItemStyle}
+              onAddCategoryGroup={onAddCategoryGroup}
+              onToggleHiddenCategories={onToggleHiddenCategories}
+              onSwitchBudgetFile={onSwitchBudgetFile}
+            />
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

@@ -1,10 +1,8 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
 import { Form } from 'react-aria-components';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button, ButtonWithLoading } from '@actual-app/components/button';
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
@@ -25,6 +23,7 @@ import {
   ModalCloseButton,
   ModalHeader,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
 type FixEncryptionKeyModalProps = Extract<
@@ -66,126 +65,128 @@ export function FixEncryptionKeyModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="fix-encryption-key">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={
-              hasExistingKey
-                ? t('Decrypt budget file')
-                : t('This file is encrypted')
-            }
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              maxWidth: 500,
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              flex: 1,
-            }}
-          >
-            {hasExistingKey ? (
-              <Paragraph>
-                {t(
-                  'Please provide the encryption key to unlock this budget file. You may be unlocking it for the first time, or the key has changed. Enter your password to continue.',
-                )}{' '}
-                <Link
-                  variant="external"
-                  to="https://actualbudget.org/docs/getting-started/sync/#end-to-end-encryption"
-                >
-                  <Trans>Learn more</Trans>
-                </Link>
-              </Paragraph>
-            ) : (
-              <Paragraph>
-                {t(
-                  "We don't have a key that encrypts or decrypts this file. Enter the password for this file to create the key for encryption.",
-                )}{' '}
-                <Link
-                  variant="external"
-                  to="https://actualbudget.org/docs/getting-started/sync/#end-to-end-encryption"
-                >
-                  <Trans>Learn more</Trans>
-                </Link>
-              </Paragraph>
-            )}
-          </View>
-          <Form
-            onSubmit={e => {
-              e.preventDefault();
-              void onUpdateKey(() => state.close());
-            }}
-          >
+      <Modal name="fix-encryption-key">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={
+                hasExistingKey
+                  ? t('Decrypt budget file')
+                  : t('This file is encrypted')
+              }
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
             <View
               style={{
-                marginTop: 15,
-                flexDirection: 'column',
-                alignItems: 'center',
+                maxWidth: 500,
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                flex: 1,
               }}
             >
-              <Text style={{ fontWeight: 600, marginBottom: 5 }}>
-                <Trans>Password</Trans>
-              </Text>{' '}
-              {error && (
-                <View
-                  style={{
-                    color: theme.errorText,
-                    textAlign: 'center',
-                    fontSize: 13,
-                    marginBottom: 3,
-                  }}
-                >
-                  {error}
-                </View>
+              {hasExistingKey ? (
+                <Paragraph>
+                  {t(
+                    'Please provide the encryption key to unlock this budget file. You may be unlocking it for the first time, or the key has changed. Enter your password to continue.',
+                  )}{' '}
+                  <Link
+                    variant="external"
+                    to="https://actualbudget.org/docs/getting-started/sync/#end-to-end-encryption"
+                  >
+                    <Trans>Learn more</Trans>
+                  </Link>
+                </Paragraph>
+              ) : (
+                <Paragraph>
+                  {t(
+                    "We don't have a key that encrypts or decrypts this file. Enter the password for this file to create the key for encryption.",
+                  )}{' '}
+                  <Link
+                    variant="external"
+                    to="https://actualbudget.org/docs/getting-started/sync/#end-to-end-encryption"
+                  >
+                    <Trans>Learn more</Trans>
+                  </Link>
+                </Paragraph>
               )}
-              <InitialFocus>
-                <BigInput
-                  type={showPassword ? 'text' : 'password'}
+            </View>
+            <Form
+              onSubmit={e => {
+                e.preventDefault();
+                void onUpdateKey(() => state.close());
+              }}
+            >
+              <View
+                style={{
+                  marginTop: 15,
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ fontWeight: 600, marginBottom: 5 }}>
+                  <Trans>Password</Trans>
+                </Text>{' '}
+                {error && (
+                  <View
+                    style={{
+                      color: theme.errorText,
+                      textAlign: 'center',
+                      fontSize: 13,
+                      marginBottom: 3,
+                    }}
+                  >
+                    {error}
+                  </View>
+                )}
+                <InitialFocus>
+                  <BigInput
+                    type={showPassword ? 'text' : 'password'}
+                    style={{
+                      width: isNarrowWidth ? '100%' : '50%',
+                      height: isNarrowWidth
+                        ? styles.mobileMinHeight
+                        : undefined,
+                    }}
+                    onChangeValue={setPassword}
+                  />
+                </InitialFocus>
+                <Text style={{ marginTop: 5 }}>
+                  <label style={{ userSelect: 'none' }}>
+                    <input
+                      type="checkbox"
+                      onClick={() => setShowPassword(!showPassword)}
+                    />{' '}
+                    <Trans>Show password</Trans>
+                  </label>
+                </Text>
+              </View>
+
+              <ModalButtons style={{ marginTop: 20 }}>
+                <Button
+                  variant="normal"
                   style={{
-                    width: isNarrowWidth ? '100%' : '50%',
+                    height: isNarrowWidth ? styles.mobileMinHeight : undefined,
+                    marginRight: 10,
+                  }}
+                  onPress={() => state.close()}
+                >
+                  <Trans>Back</Trans>
+                </Button>
+                <ButtonWithLoading
+                  type="submit"
+                  variant="primary"
+                  style={{
                     height: isNarrowWidth ? styles.mobileMinHeight : undefined,
                   }}
-                  onChangeValue={setPassword}
-                />
-              </InitialFocus>
-              <Text style={{ marginTop: 5 }}>
-                <label style={{ userSelect: 'none' }}>
-                  <input
-                    type="checkbox"
-                    onClick={() => setShowPassword(!showPassword)}
-                  />{' '}
-                  <Trans>Show password</Trans>
-                </label>
-              </Text>
-            </View>
-
-            <ModalButtons style={{ marginTop: 20 }}>
-              <Button
-                variant="normal"
-                style={{
-                  height: isNarrowWidth ? styles.mobileMinHeight : undefined,
-                  marginRight: 10,
-                }}
-                onPress={() => state.close()}
-              >
-                <Trans>Back</Trans>
-              </Button>
-              <ButtonWithLoading
-                type="submit"
-                variant="primary"
-                style={{
-                  height: isNarrowWidth ? styles.mobileMinHeight : undefined,
-                }}
-                isLoading={loading}
-              >
-                {hasExistingKey ? t('Unlock budget file') : t('Create key')}
-              </ButtonWithLoading>
-            </ModalButtons>
-          </Form>
-        </>
-      )}
-    </Modal>
+                  isLoading={loading}
+                >
+                  {hasExistingKey ? t('Unlock budget file') : t('Create key')}
+                </ButtonWithLoading>
+              </ModalButtons>
+            </Form>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

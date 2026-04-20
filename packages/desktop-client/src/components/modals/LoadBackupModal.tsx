@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
 import { Button } from '@actual-app/components/button';
@@ -14,6 +12,7 @@ import type { Backup } from '@actual-app/core/server/budgetfiles/backups';
 
 import { loadBackup, makeBackup } from '#budgetfiles/budgetfilesSlice';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Cell, Row } from '#components/table';
 import { useMetadataPref } from '#hooks/useMetadataPref';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -84,94 +83,97 @@ export function LoadBackupModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="load-backup" containerProps={{ style: { maxWidth: '30vw' } }}>
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Load Backup')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ marginBottom: 30 }}>
-            <View
-              style={{
-                margin: 20,
-                marginTop: 0,
-                marginBottom: 15,
-                lineHeight: 1.5,
-              }}
-            >
-              {latestBackup ? (
-                <Block>
-                  <Block style={{ marginBottom: 10 }}>
-                    <Text style={{ fontWeight: 600 }}>
-                      <Trans>You are currently working from a backup.</Trans>
-                    </Text>{' '}
-                    <Trans>
-                      You can load a different backup or revert to the original
-                      version below.
-                    </Trans>
+      <Modal
+        name="load-backup"
+        containerProps={{ style: { maxWidth: '30vw' } }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Load Backup')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ marginBottom: 30 }}>
+              <View
+                style={{
+                  margin: 20,
+                  marginTop: 0,
+                  marginBottom: 15,
+                  lineHeight: 1.5,
+                }}
+              >
+                {latestBackup ? (
+                  <Block>
+                    <Block style={{ marginBottom: 10 }}>
+                      <Text style={{ fontWeight: 600 }}>
+                        <Trans>You are currently working from a backup.</Trans>
+                      </Text>{' '}
+                      <Trans>
+                        You can load a different backup or revert to the
+                        original version below.
+                      </Trans>
+                    </Block>
+                    <Button
+                      variant="primary"
+                      onPress={() => {
+                        if (budgetIdToLoad && latestBackup.id) {
+                          void dispatch(
+                            loadBackup({
+                              budgetId: budgetIdToLoad,
+                              backupId: latestBackup.id,
+                            }),
+                          );
+                        }
+                      }}
+                    >
+                      <Trans>Revert to original version</Trans>
+                    </Button>
                   </Block>
-                  <Button
-                    variant="primary"
-                    onPress={() => {
-                      if (budgetIdToLoad && latestBackup.id) {
-                        void dispatch(
-                          loadBackup({
-                            budgetId: budgetIdToLoad,
-                            backupId: latestBackup.id,
-                          }),
-                        );
-                      }
-                    }}
-                  >
-                    <Trans>Revert to original version</Trans>
-                  </Button>
+                ) : (
+                  <View style={{ alignItems: 'flex-start' }}>
+                    <Block style={{ marginBottom: 10 }}>
+                      <Trans>
+                        Select a backup to load. After loading a backup, you
+                        will have a chance to revert to the current version in
+                        this screen.
+                      </Trans>{' '}
+                      <Text style={{ fontWeight: 600 }}>
+                        <Trans>
+                          If you use a backup, you will have to set up all your
+                          devices to sync from the new budget.
+                        </Trans>
+                      </Text>
+                    </Block>
+                    <Button
+                      variant="primary"
+                      isDisabled={backupDisabled}
+                      onPress={() => dispatch(makeBackup())}
+                    >
+                      <Trans>Back up now</Trans>
+                    </Button>
+                  </View>
+                )}
+              </View>
+              {previousBackups.length === 0 ? (
+                <Block style={{ color: theme.tableTextLight, marginLeft: 20 }}>
+                  <Trans>No backups available</Trans>
                 </Block>
               ) : (
-                <View style={{ alignItems: 'flex-start' }}>
-                  <Block style={{ marginBottom: 10 }}>
-                    <Trans>
-                      Select a backup to load. After loading a backup, you will
-                      have a chance to revert to the current version in this
-                      screen.
-                    </Trans>{' '}
-                    <Text style={{ fontWeight: 600 }}>
-                      <Trans>
-                        If you use a backup, you will have to set up all your
-                        devices to sync from the new budget.
-                      </Trans>
-                    </Text>
-                  </Block>
-                  <Button
-                    variant="primary"
-                    isDisabled={backupDisabled}
-                    onPress={() => dispatch(makeBackup())}
-                  >
-                    <Trans>Back up now</Trans>
-                  </Button>
-                </View>
+                <BackupTable
+                  backups={previousBackups}
+                  onSelect={id => {
+                    if (budgetIdToLoad && id) {
+                      void dispatch(
+                        loadBackup({ budgetId: budgetIdToLoad, backupId: id }),
+                      );
+                    }
+                  }}
+                />
               )}
             </View>
-            {previousBackups.length === 0 ? (
-              <Block style={{ color: theme.tableTextLight, marginLeft: 20 }}>
-                <Trans>No backups available</Trans>
-              </Block>
-            ) : (
-              <BackupTable
-                backups={previousBackups}
-                onSelect={id => {
-                  if (budgetIdToLoad && id) {
-                    void dispatch(
-                      loadBackup({ budgetId: budgetIdToLoad, backupId: id }),
-                    );
-                  }
-                }}
-              />
-            )}
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

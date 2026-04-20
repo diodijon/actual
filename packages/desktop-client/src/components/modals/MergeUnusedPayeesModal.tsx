@@ -1,8 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { Paragraph } from '@actual-app/components/paragraph';
@@ -15,6 +13,7 @@ import type { TransObjectLiteral } from '@actual-app/core/types/util';
 
 import { Information } from '#components/alerts';
 import { Modal, ModalButtons } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { usePayees } from '#hooks/usePayees';
 import { replaceModal } from '#modals/modalsSlice';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -105,126 +104,131 @@ export function MergeUnusedPayeesModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="merge-unused-payees">
-      {({ state }) => (
-        <View style={{ padding: 20, maxWidth: 500 }}>
-          <View>
-            <Paragraph style={{ marginBottom: 10, fontWeight: 500 }}>
-              {payees.length === 1 ? (
-                <Trans>
-                  The payee{' '}
-                  <Text style={highlightStyle}>
-                    {{ previousPayee: payees[0].name } as TransObjectLiteral}
-                  </Text>{' '}
-                  is not used by transactions any more. Would you like to merge
-                  it with{' '}
-                  <Text style={highlightStyle}>
-                    {{ payee: targetPayee.name } as TransObjectLiteral}
-                  </Text>
-                  ?
-                </Trans>
-              ) : (
-                <>
+      <Modal name="merge-unused-payees">
+        {({ state }) => (
+          <View style={{ padding: 20, maxWidth: 500 }}>
+            <View>
+              <Paragraph style={{ marginBottom: 10, fontWeight: 500 }}>
+                {payees.length === 1 ? (
                   <Trans>
-                    The following payees are not used by transactions any more.
-                    Would you like to merge them with{' '}
+                    The payee{' '}
+                    <Text style={highlightStyle}>
+                      {{ previousPayee: payees[0].name } as TransObjectLiteral}
+                    </Text>{' '}
+                    is not used by transactions any more. Would you like to
+                    merge it with{' '}
                     <Text style={highlightStyle}>
                       {{ payee: targetPayee.name } as TransObjectLiteral}
                     </Text>
                     ?
                   </Trans>
-                  <ul
-                    ref={flashRef}
-                    style={{
-                      margin: 0,
-                      marginTop: 10,
-                      maxHeight: 140,
-                      overflow: 'auto',
-                    }}
-                  >
-                    {payees.map(payee => (
-                      <li key={payee.id}>
-                        <Text style={highlightStyle}>{payee.name}</Text>
-                      </li>
-                    ))}
-                  </ul>
-                </>
-              )}
-            </Paragraph>
-
-            <Information>
-              <Trans>
-                Merging will remove the payee and transfer any existing rules to
-                the new payee.
-              </Trans>
-              {!isEditingRule && (
-                <>
-                  {' '}
-                  <Trans>
-                    If checked below, a rule will be created to do this rename
-                    while importing transactions.
-                  </Trans>
-                </>
-              )}
-            </Information>
-
-            {!isEditingRule && (
-              <label
-                style={{
-                  fontSize: 13,
-                  marginTop: 10,
-                  color: theme.pageTextLight,
-                  userSelect: 'none',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-                aria-label={t(
-                  'Automatically rename these payees in the future',
+                ) : (
+                  <>
+                    <Trans>
+                      The following payees are not used by transactions any
+                      more. Would you like to merge them with{' '}
+                      <Text style={highlightStyle}>
+                        {{ payee: targetPayee.name } as TransObjectLiteral}
+                      </Text>
+                      ?
+                    </Trans>
+                    <ul
+                      ref={flashRef}
+                      style={{
+                        margin: 0,
+                        marginTop: 10,
+                        maxHeight: 140,
+                        overflow: 'auto',
+                      }}
+                    >
+                      {payees.map(payee => (
+                        <li key={payee.id}>
+                          <Text style={highlightStyle}>{payee.name}</Text>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
                 )}
-              >
-                <input
-                  type="checkbox"
-                  checked={shouldCreateRule}
-                  onChange={e => setShouldCreateRule(e.target.checked)}
-                />
-                <Text style={{ marginLeft: 3 }}>
-                  <Trans>Automatically rename these payees in the future</Trans>
-                </Text>
-              </label>
-            )}
+              </Paragraph>
 
-            <ModalButtons style={{ marginTop: 20 }} focusButton>
-              <Button
-                variant="primary"
-                autoFocus
-                style={{ marginRight: 10 }}
-                onPress={() => {
-                  void onMerge(targetPayee);
-                  state.close();
-                }}
-              >
-                <Trans>Merge</Trans>
-              </Button>
-              {!isEditingRule && shouldCreateRule && (
+              <Information>
+                <Trans>
+                  Merging will remove the payee and transfer any existing rules
+                  to the new payee.
+                </Trans>
+                {!isEditingRule && (
+                  <>
+                    {' '}
+                    <Trans>
+                      If checked below, a rule will be created to do this rename
+                      while importing transactions.
+                    </Trans>
+                  </>
+                )}
+              </Information>
+
+              {!isEditingRule && (
+                <label
+                  style={{
+                    fontSize: 13,
+                    marginTop: 10,
+                    color: theme.pageTextLight,
+                    userSelect: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                  aria-label={t(
+                    'Automatically rename these payees in the future',
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    checked={shouldCreateRule}
+                    onChange={e => setShouldCreateRule(e.target.checked)}
+                  />
+                  <Text style={{ marginLeft: 3 }}>
+                    <Trans>
+                      Automatically rename these payees in the future
+                    </Trans>
+                  </Text>
+                </label>
+              )}
+
+              <ModalButtons style={{ marginTop: 20 }} focusButton>
                 <Button
+                  variant="primary"
+                  autoFocus
                   style={{ marginRight: 10 }}
                   onPress={() => {
-                    void onMergeAndCreateRule(targetPayee);
+                    void onMerge(targetPayee);
                     state.close();
                   }}
                 >
-                  <Trans>Merge and edit rule</Trans>
+                  <Trans>Merge</Trans>
                 </Button>
-              )}
-              <Button style={{ marginRight: 10 }} onPress={() => state.close()}>
-                <Trans>Do nothing</Trans>
-              </Button>
-            </ModalButtons>
+                {!isEditingRule && shouldCreateRule && (
+                  <Button
+                    style={{ marginRight: 10 }}
+                    onPress={() => {
+                      void onMergeAndCreateRule(targetPayee);
+                      state.close();
+                    }}
+                  >
+                    <Trans>Merge and edit rule</Trans>
+                  </Button>
+                )}
+                <Button
+                  style={{ marginRight: 10 }}
+                  onPress={() => state.close()}
+                >
+                  <Trans>Do nothing</Trans>
+                </Button>
+              </ModalButtons>
+            </View>
           </View>
-        </View>
-      )}
-    </Modal>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

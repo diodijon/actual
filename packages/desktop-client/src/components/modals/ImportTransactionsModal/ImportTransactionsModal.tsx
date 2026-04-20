@@ -6,6 +6,7 @@ import type {
   ReactNode,
   SetStateAction,
 } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button, ButtonWithLoading } from '@actual-app/components/button';
@@ -26,6 +27,7 @@ import {
   useImportTransactionsMutation,
 } from '#accounts';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { SectionLabel } from '#components/forms';
 import { LabeledCheckbox } from '#components/forms/LabeledCheckbox';
 import { TableHeader, TableWithNavigator } from '#components/table';
@@ -867,429 +869,437 @@ export function ImportTransactionsModal({
   }
 
   return (
-    <Modal
-      name="import-transactions"
-      isLoading={loadingState === 'parsing'}
-      containerProps={{ style: { width: 800 } }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={
-              t('Import transactions') +
-              (filetype ? ` (${filetype.toUpperCase()})` : '')
-            }
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          {error && !error.parsed && (
-            <View style={{ alignItems: 'center', marginBottom: 15 }}>
-              <Text style={{ marginRight: 10, color: theme.errorText }}>
-                <strong>
-                  <Trans>Error:</Trans>
-                </strong>{' '}
-                {error.message}
-              </Text>
-            </View>
-          )}
-          {(!error || !error.parsed) && (
-            <View
-              style={{ ...styles.tableContainer, height: 300, flex: 'unset' }}
-            >
-              <TableHeader headers={headers} />
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
+      <Modal
+        name="import-transactions"
+        isLoading={loadingState === 'parsing'}
+        containerProps={{ style: { width: 800 } }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={
+                t('Import transactions') +
+                (filetype ? ` (${filetype.toUpperCase()})` : '')
+              }
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            {error && !error.parsed && (
+              <View style={{ alignItems: 'center', marginBottom: 15 }}>
+                <Text style={{ marginRight: 10, color: theme.errorText }}>
+                  <strong>
+                    <Trans>Error:</Trans>
+                  </strong>{' '}
+                  {error.message}
+                </Text>
+              </View>
+            )}
+            {(!error || !error.parsed) && (
+              <View
+                style={{ ...styles.tableContainer, height: 300, flex: 'unset' }}
+              >
+                <TableHeader headers={headers} />
 
-              {/* @ts-expect-error - ImportTransaction is not a TableItem */}
-              <TableWithNavigator<ImportTransaction>
-                items={transactions.filter(
-                  trans =>
-                    !trans.isMatchedTransaction ||
-                    (trans.isMatchedTransaction && reconcile),
-                )}
-                fields={['payee', 'category', 'amount']}
-                style={{ backgroundColor: theme.tableHeaderBackground }}
-                getItemKey={index => String(index)}
-                renderEmpty={() => {
-                  return (
-                    <View
-                      style={{
-                        textAlign: 'center',
-                        marginTop: 25,
-                        color: theme.tableHeaderText,
-                        fontStyle: 'italic',
-                      }}
-                    >
-                      <Trans>No transactions found</Trans>
+                {/* @ts-expect-error - ImportTransaction is not a TableItem */}
+                <TableWithNavigator<ImportTransaction>
+                  items={transactions.filter(
+                    trans =>
+                      !trans.isMatchedTransaction ||
+                      (trans.isMatchedTransaction && reconcile),
+                  )}
+                  fields={['payee', 'category', 'amount']}
+                  style={{ backgroundColor: theme.tableHeaderBackground }}
+                  getItemKey={index => String(index)}
+                  renderEmpty={() => {
+                    return (
+                      <View
+                        style={{
+                          textAlign: 'center',
+                          marginTop: 25,
+                          color: theme.tableHeaderText,
+                          fontStyle: 'italic',
+                        }}
+                      >
+                        <Trans>No transactions found</Trans>
+                      </View>
+                    );
+                  }}
+                  renderItem={({ item }) => (
+                    <View>
+                      <Transaction
+                        transaction={item}
+                        showParsed={filetype === 'csv' || filetype === 'qif'}
+                        parseDateFormat={parseDateFormat}
+                        dateFormat={dateFormat}
+                        fieldMappings={fieldMappings}
+                        splitMode={splitMode}
+                        inOutMode={inOutMode}
+                        outValue={outValue}
+                        flipAmount={flipAmount}
+                        multiplierAmount={multiplierAmount}
+                        categories={categories}
+                        onCheckTransaction={onCheckTransaction}
+                        reconcile={reconcile}
+                      />
                     </View>
-                  );
+                  )}
+                />
+              </View>
+            )}
+            {error && error.parsed && (
+              <View
+                style={{
+                  color: theme.errorText,
+                  alignItems: 'center',
+                  marginTop: 10,
                 }}
-                renderItem={({ item }) => (
-                  <View>
-                    <Transaction
-                      transaction={item}
-                      showParsed={filetype === 'csv' || filetype === 'qif'}
-                      parseDateFormat={parseDateFormat}
-                      dateFormat={dateFormat}
-                      fieldMappings={fieldMappings}
-                      splitMode={splitMode}
-                      inOutMode={inOutMode}
-                      outValue={outValue}
-                      flipAmount={flipAmount}
-                      multiplierAmount={multiplierAmount}
-                      categories={categories}
-                      onCheckTransaction={onCheckTransaction}
-                      reconcile={reconcile}
-                    />
-                  </View>
+              >
+                <Text style={{ maxWidth: 450, marginBottom: 15 }}>
+                  <strong>Error:</strong> {error.message}
+                </Text>
+                {error.parsed && (
+                  <Button onPress={() => onNewFile()}>
+                    <Trans>Select new file...</Trans>
+                  </Button>
                 )}
-              />
-            </View>
-          )}
-          {error && error.parsed && (
+              </View>
+            )}
+
             <View
               style={{
-                color: theme.errorText,
-                alignItems: 'center',
                 marginTop: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 5,
               }}
             >
-              <Text style={{ maxWidth: 450, marginBottom: 15 }}>
-                <strong>Error:</strong> {error.message}
-              </Text>
-              {error.parsed && (
-                <Button onPress={() => onNewFile()}>
-                  <Trans>Select new file...</Trans>
+              <label
+                htmlFor="start-date-filter"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  gap: 5,
+                  alignItems: 'baseline',
+                }}
+              >
+                <Trans>Only import transactions since:</Trans>
+                <Input
+                  id="start-date-filter"
+                  type="date"
+                  value={startDate}
+                  onChangeValue={value => setStartDate(value)}
+                  style={{ width: 150 }}
+                />
+              </label>
+              {startDate && (
+                <Button onPress={() => setStartDate('')}>
+                  <Trans>Clear</Trans>
                 </Button>
               )}
             </View>
-          )}
 
-          <View
-            style={{
-              marginTop: 10,
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 5,
-            }}
-          >
-            <label
-              htmlFor="start-date-filter"
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                gap: 5,
-                alignItems: 'baseline',
-              }}
-            >
-              <Trans>Only import transactions since:</Trans>
-              <Input
-                id="start-date-filter"
-                type="date"
-                value={startDate}
-                onChangeValue={value => setStartDate(value)}
-                style={{ width: 150 }}
-              />
-            </label>
-            {startDate && (
-              <Button onPress={() => setStartDate('')}>
-                <Trans>Clear</Trans>
-              </Button>
+            {filetype === 'csv' && (
+              <View style={{ marginTop: 10 }}>
+                <FieldMappings
+                  transactions={transactions}
+                  onChange={onUpdateFields}
+                  mappings={fieldMappings || undefined}
+                  splitMode={splitMode}
+                  inOutMode={inOutMode}
+                  hasHeaderRow={hasHeaderRow}
+                />
+              </View>
             )}
-          </View>
 
-          {filetype === 'csv' && (
-            <View style={{ marginTop: 10 }}>
-              <FieldMappings
-                transactions={transactions}
-                onChange={onUpdateFields}
-                mappings={fieldMappings || undefined}
-                splitMode={splitMode}
-                inOutMode={inOutMode}
-                hasHeaderRow={hasHeaderRow}
-              />
-            </View>
-          )}
+            {isOfxFile(filetype) && (
+              <>
+                <CheckboxToggle
+                  id="form_fallback_missing_payee"
+                  checked={fallbackMissingPayeeToMemo}
+                  onChange={setFallbackMissingPayeeToMemo}
+                >
+                  <Trans>Use Memo as a fallback for empty Payees</Trans>
+                </CheckboxToggle>
+                <CheckboxToggle
+                  id="form_ofx_swap_payee_memo"
+                  checked={ofxSwapPayeeAndMemo}
+                  onChange={setOfxSwapPayeeAndMemo}
+                >
+                  <Trans>Swap Payee and Memo</Trans>
+                </CheckboxToggle>
+              </>
+            )}
 
-          {isOfxFile(filetype) && (
-            <>
+            {filetype !== 'csv' && (
               <CheckboxToggle
-                id="form_fallback_missing_payee"
-                checked={fallbackMissingPayeeToMemo}
-                onChange={setFallbackMissingPayeeToMemo}
+                id="import_notes"
+                checked={importNotes}
+                onChange={setImportNotes}
               >
-                <Trans>Use Memo as a fallback for empty Payees</Trans>
+                <Trans>Import notes from file</Trans>
               </CheckboxToggle>
+            )}
+
+            {filetype === 'qif' && (
               <CheckboxToggle
-                id="form_ofx_swap_payee_memo"
-                checked={ofxSwapPayeeAndMemo}
-                onChange={setOfxSwapPayeeAndMemo}
+                id="form_qif_swap_payee_memo"
+                checked={qifSwapPayeeAndMemo}
+                onChange={setQifSwapPayeeAndMemo}
               >
                 <Trans>Swap Payee and Memo</Trans>
               </CheckboxToggle>
-            </>
-          )}
+            )}
 
-          {filetype !== 'csv' && (
-            <CheckboxToggle
-              id="import_notes"
-              checked={importNotes}
-              onChange={setImportNotes}
-            >
-              <Trans>Import notes from file</Trans>
-            </CheckboxToggle>
-          )}
-
-          {filetype === 'qif' && (
-            <CheckboxToggle
-              id="form_qif_swap_payee_memo"
-              checked={qifSwapPayeeAndMemo}
-              onChange={setQifSwapPayeeAndMemo}
-            >
-              <Trans>Swap Payee and Memo</Trans>
-            </CheckboxToggle>
-          )}
-
-          {isCamtFile(filetype) && (
-            <CheckboxToggle
-              id="form_camt_swap_payee_memo"
-              checked={camtSwapPayeeAndMemo}
-              onChange={setCamtSwapPayeeAndMemo}
-            >
-              <Trans>Swap Payee and Memo</Trans>
-            </CheckboxToggle>
-          )}
-
-          {(isOfxFile(filetype) || isCamtFile(filetype)) && (
-            <CheckboxToggle
-              id="form_dont_reconcile"
-              checked={reconcile}
-              onChange={setReconcile}
-            >
-              <Trans>Merge with existing transactions</Trans>
-            </CheckboxToggle>
-          )}
-
-          {(isOfxFile(filetype) || isCamtFile(filetype)) && reconcile && (
-            <CheckboxToggle
-              id="form_reimport_deleted"
-              checked={reimportDeleted}
-              onChange={setReimportDeleted}
-            >
-              <Trans>Reimport deleted transactions</Trans>
-            </CheckboxToggle>
-          )}
-
-          {/*Import Options */}
-          {(filetype === 'qif' || filetype === 'csv') && (
-            <View style={{ marginTop: 10 }}>
-              <SpaceBetween
-                gap={5}
-                style={{ marginTop: 5, alignItems: 'flex-start' }}
+            {isCamtFile(filetype) && (
+              <CheckboxToggle
+                id="form_camt_swap_payee_memo"
+                checked={camtSwapPayeeAndMemo}
+                onChange={setCamtSwapPayeeAndMemo}
               >
-                {/* Date Format */}
-                <View>
-                  {(filetype === 'qif' || filetype === 'csv') && (
-                    <DateFormatSelect
-                      transactions={transactions}
-                      fieldMappings={fieldMappings || undefined}
-                      parseDateFormat={parseDateFormat || undefined}
-                      onChange={value => {
-                        setParseDateFormat(isDateFormat(value) ? value : null);
-                      }}
-                    />
-                  )}
-                </View>
+                <Trans>Swap Payee and Memo</Trans>
+              </CheckboxToggle>
+            )}
 
-                {/* CSV Options */}
-                {filetype === 'csv' && (
-                  <View style={{ marginLeft: 10, gap: 5 }}>
-                    <SectionLabel title={t('CSV OPTIONS')} />
-                    <label
-                      htmlFor="csv-delimiter-select"
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 5,
-                        alignItems: 'baseline',
-                      }}
-                    >
-                      <Trans>Delimiter:</Trans>
-                      <Select
-                        id="csv-delimiter-select"
-                        options={[
-                          [',', ','],
-                          [';', ';'],
-                          ['|', '|'],
-                          ['\t', 'tab'],
-                          ['~', '~'],
-                        ]}
-                        value={delimiter}
+            {(isOfxFile(filetype) || isCamtFile(filetype)) && (
+              <CheckboxToggle
+                id="form_dont_reconcile"
+                checked={reconcile}
+                onChange={setReconcile}
+              >
+                <Trans>Merge with existing transactions</Trans>
+              </CheckboxToggle>
+            )}
+
+            {(isOfxFile(filetype) || isCamtFile(filetype)) && reconcile && (
+              <CheckboxToggle
+                id="form_reimport_deleted"
+                checked={reimportDeleted}
+                onChange={setReimportDeleted}
+              >
+                <Trans>Reimport deleted transactions</Trans>
+              </CheckboxToggle>
+            )}
+
+            {/*Import Options */}
+            {(filetype === 'qif' || filetype === 'csv') && (
+              <View style={{ marginTop: 10 }}>
+                <SpaceBetween
+                  gap={5}
+                  style={{ marginTop: 5, alignItems: 'flex-start' }}
+                >
+                  {/* Date Format */}
+                  <View>
+                    {(filetype === 'qif' || filetype === 'csv') && (
+                      <DateFormatSelect
+                        transactions={transactions}
+                        fieldMappings={fieldMappings || undefined}
+                        parseDateFormat={parseDateFormat || undefined}
                         onChange={value => {
-                          setDelimiter(value);
+                          setParseDateFormat(
+                            isDateFormat(value) ? value : null,
+                          );
                         }}
-                        style={{ width: 50 }}
                       />
-                    </label>
-                    <label
-                      htmlFor="csv-skip-start-lines"
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 5,
-                        alignItems: 'baseline',
-                      }}
-                    >
-                      <Trans>Skip start lines:</Trans>
-                      <Input
-                        id="csv-skip-start-lines"
-                        type="number"
-                        value={skipStartLines}
-                        min="0"
-                        step="1"
-                        onChangeValue={value => {
-                          setSkipStartLines(Math.abs(parseInt(value, 10) || 0));
-                        }}
-                        style={{ width: 50 }}
-                      />
-                    </label>
-                    <label
-                      htmlFor="csv-skip-end-lines"
-                      style={{
-                        display: 'flex',
-                        flexDirection: 'row',
-                        gap: 5,
-                        alignItems: 'baseline',
-                      }}
-                    >
-                      <Trans>Skip end lines:</Trans>
-                      <Input
-                        id="csv-skip-end-lines"
-                        type="number"
-                        value={skipEndLines}
-                        min="0"
-                        step="1"
-                        onChangeValue={value => {
-                          setSkipEndLines(Math.abs(parseInt(value, 10) || 0));
-                        }}
-                        style={{ width: 50 }}
-                      />
-                    </label>
-                    <CheckboxToggle
-                      id="form_has_header"
-                      checked={hasHeaderRow}
-                      onChange={setHasHeaderRow}
-                    >
-                      <Trans>File has header row</Trans>
-                    </CheckboxToggle>
-                    <CheckboxToggle
-                      id="clear_on_import"
-                      checked={clearOnImport}
-                      onChange={setClearOnImport}
-                    >
-                      <Trans>Clear transactions on import</Trans>
-                    </CheckboxToggle>
-                    <CheckboxToggle
-                      id="form_dont_reconcile"
-                      checked={reconcile}
-                      onChange={setReconcile}
-                    >
-                      <Trans>Merge with existing transactions</Trans>
-                    </CheckboxToggle>
-                    {reconcile && (
-                      <CheckboxToggle
-                        id="form_reimport_deleted_csv"
-                        checked={reimportDeleted}
-                        onChange={setReimportDeleted}
-                      >
-                        <Trans>Reimport deleted transactions</Trans>
-                      </CheckboxToggle>
                     )}
                   </View>
-                )}
 
-                <View style={{ flex: 1 }} />
-
-                <View style={{ marginRight: 10, gap: 5 }}>
-                  <SectionLabel title={t('AMOUNT OPTIONS')} />
-                  <CheckboxToggle
-                    id="form_flip"
-                    checked={flipAmount}
-                    onChange={setFlipAmount}
-                  >
-                    <Trans>Flip amount</Trans>
-                  </CheckboxToggle>
-                  <MultiplierOption
-                    multiplierEnabled={multiplierEnabled}
-                    multiplierAmount={multiplierAmount}
-                    onToggle={() => {
-                      setMultiplierEnabled(!multiplierEnabled);
-                      setMultiplierAmount('');
-                    }}
-                    onChangeAmount={onMultiplierChange}
-                  />
+                  {/* CSV Options */}
                   {filetype === 'csv' && (
-                    <>
-                      <LabeledCheckbox
-                        id="form_split"
-                        checked={splitMode}
-                        onChange={() => {
-                          onSplitMode();
+                    <View style={{ marginLeft: 10, gap: 5 }}>
+                      <SectionLabel title={t('CSV OPTIONS')} />
+                      <label
+                        htmlFor="csv-delimiter-select"
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          gap: 5,
+                          alignItems: 'baseline',
                         }}
                       >
-                        <Trans>
-                          Split amount into separate inflow/outflow columns
-                        </Trans>
-                      </LabeledCheckbox>
-                      <InOutOption
-                        inOutMode={inOutMode}
-                        outValue={outValue}
-                        onToggle={() => {
-                          setInOutMode(!inOutMode);
+                        <Trans>Delimiter:</Trans>
+                        <Select
+                          id="csv-delimiter-select"
+                          options={[
+                            [',', ','],
+                            [';', ';'],
+                            ['|', '|'],
+                            ['\t', 'tab'],
+                            ['~', '~'],
+                          ]}
+                          value={delimiter}
+                          onChange={value => {
+                            setDelimiter(value);
+                          }}
+                          style={{ width: 50 }}
+                        />
+                      </label>
+                      <label
+                        htmlFor="csv-skip-start-lines"
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          gap: 5,
+                          alignItems: 'baseline',
                         }}
-                        onChangeText={setOutValue}
-                      />
-                    </>
+                      >
+                        <Trans>Skip start lines:</Trans>
+                        <Input
+                          id="csv-skip-start-lines"
+                          type="number"
+                          value={skipStartLines}
+                          min="0"
+                          step="1"
+                          onChangeValue={value => {
+                            setSkipStartLines(
+                              Math.abs(parseInt(value, 10) || 0),
+                            );
+                          }}
+                          style={{ width: 50 }}
+                        />
+                      </label>
+                      <label
+                        htmlFor="csv-skip-end-lines"
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          gap: 5,
+                          alignItems: 'baseline',
+                        }}
+                      >
+                        <Trans>Skip end lines:</Trans>
+                        <Input
+                          id="csv-skip-end-lines"
+                          type="number"
+                          value={skipEndLines}
+                          min="0"
+                          step="1"
+                          onChangeValue={value => {
+                            setSkipEndLines(Math.abs(parseInt(value, 10) || 0));
+                          }}
+                          style={{ width: 50 }}
+                        />
+                      </label>
+                      <CheckboxToggle
+                        id="form_has_header"
+                        checked={hasHeaderRow}
+                        onChange={setHasHeaderRow}
+                      >
+                        <Trans>File has header row</Trans>
+                      </CheckboxToggle>
+                      <CheckboxToggle
+                        id="clear_on_import"
+                        checked={clearOnImport}
+                        onChange={setClearOnImport}
+                      >
+                        <Trans>Clear transactions on import</Trans>
+                      </CheckboxToggle>
+                      <CheckboxToggle
+                        id="form_dont_reconcile"
+                        checked={reconcile}
+                        onChange={setReconcile}
+                      >
+                        <Trans>Merge with existing transactions</Trans>
+                      </CheckboxToggle>
+                      {reconcile && (
+                        <CheckboxToggle
+                          id="form_reimport_deleted_csv"
+                          checked={reimportDeleted}
+                          onChange={setReimportDeleted}
+                        >
+                          <Trans>Reimport deleted transactions</Trans>
+                        </CheckboxToggle>
+                      )}
+                    </View>
                   )}
-                </View>
-              </SpaceBetween>
-            </View>
-          )}
 
-          <View style={{ flexDirection: 'row', marginTop: 5 }}>
-            {/*Submit Button */}
-            <View
-              style={{
-                alignSelf: 'flex-end',
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: '1em',
-              }}
-            >
-              {(() => {
-                const count = transactions?.filter(
-                  trans =>
-                    !trans.isMatchedTransaction &&
-                    trans.selected &&
-                    !trans.tombstone,
-                ).length;
+                  <View style={{ flex: 1 }} />
 
-                return (
-                  <ButtonWithLoading
-                    variant="primary"
-                    autoFocus
-                    isDisabled={count === 0}
-                    isLoading={loadingState === 'importing'}
-                    onPress={() => {
-                      void onImport(() => state.close());
-                    }}
-                  >
-                    <Trans count={count}>Import {{ count }} transactions</Trans>
-                  </ButtonWithLoading>
-                );
-              })()}
+                  <View style={{ marginRight: 10, gap: 5 }}>
+                    <SectionLabel title={t('AMOUNT OPTIONS')} />
+                    <CheckboxToggle
+                      id="form_flip"
+                      checked={flipAmount}
+                      onChange={setFlipAmount}
+                    >
+                      <Trans>Flip amount</Trans>
+                    </CheckboxToggle>
+                    <MultiplierOption
+                      multiplierEnabled={multiplierEnabled}
+                      multiplierAmount={multiplierAmount}
+                      onToggle={() => {
+                        setMultiplierEnabled(!multiplierEnabled);
+                        setMultiplierAmount('');
+                      }}
+                      onChangeAmount={onMultiplierChange}
+                    />
+                    {filetype === 'csv' && (
+                      <>
+                        <LabeledCheckbox
+                          id="form_split"
+                          checked={splitMode}
+                          onChange={() => {
+                            onSplitMode();
+                          }}
+                        >
+                          <Trans>
+                            Split amount into separate inflow/outflow columns
+                          </Trans>
+                        </LabeledCheckbox>
+                        <InOutOption
+                          inOutMode={inOutMode}
+                          outValue={outValue}
+                          onToggle={() => {
+                            setInOutMode(!inOutMode);
+                          }}
+                          onChangeText={setOutValue}
+                        />
+                      </>
+                    )}
+                  </View>
+                </SpaceBetween>
+              </View>
+            )}
+
+            <View style={{ flexDirection: 'row', marginTop: 5 }}>
+              {/*Submit Button */}
+              <View
+                style={{
+                  alignSelf: 'flex-end',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: '1em',
+                }}
+              >
+                {(() => {
+                  const count = transactions?.filter(
+                    trans =>
+                      !trans.isMatchedTransaction &&
+                      trans.selected &&
+                      !trans.tombstone,
+                  ).length;
+
+                  return (
+                    <ButtonWithLoading
+                      variant="primary"
+                      autoFocus
+                      isDisabled={count === 0}
+                      isLoading={loadingState === 'importing'}
+                      onPress={() => {
+                        void onImport(() => state.close());
+                      }}
+                    >
+                      <Trans count={count}>
+                        Import {{ count }} transactions
+                      </Trans>
+                    </ButtonWithLoading>
+                  );
+                })()}
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
+    </ErrorBoundary>
   );
 }
 

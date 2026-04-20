@@ -1,9 +1,7 @@
 import React, { useMemo } from 'react';
 import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Menu } from '@actual-app/components/menu';
 import { styles } from '@actual-app/components/styles';
@@ -23,6 +21,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useLocale } from '#hooks/useLocale';
 import { useSchedules } from '#hooks/useSchedules';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -66,39 +65,41 @@ export function ScheduledTransactionMenuModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="scheduled-transaction-menu">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={<ModalTitle title={schedule?.name || ''} shrinkOnOverflow />}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: 20,
-            }}
-          >
-            <Text style={{ fontSize: 17, fontWeight: 400 }}>
-              <Trans>Scheduled date</Trans>
-            </Text>
-            <Text style={{ fontSize: 17, fontWeight: 700 }}>
-              {format(schedule?.next_date || '', 'MMMM dd, yyyy', locale)}
-            </Text>
-          </View>
-          <ScheduledTransactionMenu
-            transactionId={transactionId}
-            onPost={onPost}
-            onSkip={onSkip}
-            onComplete={onComplete}
-            canBeSkipped={canBeSkipped}
-            canBeCompleted={canBeCompleted}
-            getItemStyle={() => defaultMenuItemStyle}
-          />
-        </>
-      )}
-    </Modal>
+      <Modal name="scheduled-transaction-menu">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={
+                <ModalTitle title={schedule?.name || ''} shrinkOnOverflow />
+              }
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 20,
+              }}
+            >
+              <Text style={{ fontSize: 17, fontWeight: 400 }}>
+                <Trans>Scheduled date</Trans>
+              </Text>
+              <Text style={{ fontSize: 17, fontWeight: 700 }}>
+                {format(schedule?.next_date || '', 'MMMM dd, yyyy', locale)}
+              </Text>
+            </View>
+            <ScheduledTransactionMenu
+              transactionId={transactionId}
+              onPost={onPost}
+              onSkip={onSkip}
+              onComplete={onComplete}
+              canBeSkipped={canBeSkipped}
+              canBeCompleted={canBeCompleted}
+              getItemStyle={() => defaultMenuItemStyle}
+            />
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

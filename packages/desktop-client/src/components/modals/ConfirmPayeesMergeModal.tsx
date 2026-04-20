@@ -1,6 +1,5 @@
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -11,6 +10,7 @@ import { View } from '@actual-app/components/view';
 
 import { Information } from '#components/alerts';
 import { Modal, ModalButtons, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { usePayees } from '#hooks/usePayees';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
@@ -51,68 +51,73 @@ export function ConfirmPayeesMergeModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="confirm-payees-merge">
-      {({ state }) => (
-        <>
-          <ModalHeader title={t('Confirm Merge')} />
+      <Modal name="confirm-payees-merge">
+        {({ state }) => (
+          <>
+            <ModalHeader title={t('Confirm Merge')} />
 
-          <View style={{ maxWidth: 500, marginTop: 20 }}>
-            <View
-              style={{
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 20,
-              }}
-            >
-              <View style={{ width: '100%', flexDirection: 'column', gap: 10 }}>
-                {mergePayees.map(payee => (
-                  <View style={mergePayeeStyle} key={payee.id}>
-                    <Text>{payee.name}</Text>
-                  </View>
-                ))}
-              </View>
-              <SvgArrowDown width={20} height={20} />
-              <View style={{ width: '100%' }}>
-                <View style={targetPayeeStyle}>
-                  <Text
-                    style={{
-                      fontWeight: 700,
-                      color: theme.tableRowBackgroundHighlightText,
-                    }}
-                  >
-                    {targetPayee.name}
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <Information style={{ marginTop: 20 }}>
-              <Trans>
-                Merging will delete the selected payee(s) and transfer any
-                associated rules to the target payee.
-              </Trans>
-            </Information>
-
-            <ModalButtons style={{ marginTop: 20 }} focusButton>
-              <Button style={{ marginRight: 10 }} onPress={() => state.close()}>
-                <Trans>Cancel</Trans>
-              </Button>
-              <Button
-                variant="primary"
-                style={{ marginRight: 10 }}
-                onPress={async () => {
-                  onConfirm?.();
-                  state.close();
+            <View style={{ maxWidth: 500, marginTop: 20 }}>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 20,
                 }}
               >
-                <Trans>Merge</Trans>
-              </Button>
-            </ModalButtons>
-          </View>
-        </>
-      )}
-    </Modal>
+                <View
+                  style={{ width: '100%', flexDirection: 'column', gap: 10 }}
+                >
+                  {mergePayees.map(payee => (
+                    <View style={mergePayeeStyle} key={payee.id}>
+                      <Text>{payee.name}</Text>
+                    </View>
+                  ))}
+                </View>
+                <SvgArrowDown width={20} height={20} />
+                <View style={{ width: '100%' }}>
+                  <View style={targetPayeeStyle}>
+                    <Text
+                      style={{
+                        fontWeight: 700,
+                        color: theme.tableRowBackgroundHighlightText,
+                      }}
+                    >
+                      {targetPayee.name}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              <Information style={{ marginTop: 20 }}>
+                <Trans>
+                  Merging will delete the selected payee(s) and transfer any
+                  associated rules to the target payee.
+                </Trans>
+              </Information>
+
+              <ModalButtons style={{ marginTop: 20 }} focusButton>
+                <Button
+                  style={{ marginRight: 10 }}
+                  onPress={() => state.close()}
+                >
+                  <Trans>Cancel</Trans>
+                </Button>
+                <Button
+                  variant="primary"
+                  style={{ marginRight: 10 }}
+                  onPress={async () => {
+                    onConfirm?.();
+                    state.close();
+                  }}
+                >
+                  <Trans>Merge</Trans>
+                </Button>
+              </ModalButtons>
+            </View>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

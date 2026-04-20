@@ -1,7 +1,6 @@
 // @ts-strict-ignore
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
@@ -12,6 +11,7 @@ import { styles } from '@actual-app/components/styles';
 import { View } from '@actual-app/components/view';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
 type ConfirmTransactionEditModalProps = Extract<
@@ -35,130 +35,130 @@ export function ConfirmTransactionEditModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="confirm-transaction-edit"
-      containerProps={{ style: { width: '30vw' } }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Reconciled Transaction')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ lineHeight: 1.5 }}>
-            {confirmReason === 'batchDeleteWithReconciledTransfer' ? (
-              <Block>
-                <Trans>
-                  This transfer has a linked transaction in another account that
-                  is reconciled. Deleting it may bring that account's
-                  reconciliation out of balance.
-                </Trans>
-              </Block>
-            ) : confirmReason === 'batchDeleteWithReconciled' ? (
-              <Block>
-                <Trans>
-                  Deleting reconciled transactions may bring your reconciliation
-                  out of balance.
-                </Trans>
-              </Block>
-            ) : confirmReason === 'batchEditWithReconciledTransfer' ? (
-              <Block>
-                <Trans>
-                  This transfer has a linked transaction in another account that
-                  is reconciled. Editing it may bring that account's
-                  reconciliation out of balance.
-                </Trans>
-              </Block>
-            ) : confirmReason === 'batchEditWithReconciled' ? (
-              <Block>
-                <Trans>
-                  Editing reconciled transactions may bring your reconciliation
-                  out of balance.
-                </Trans>
-              </Block>
-            ) : confirmReason === 'batchDuplicateWithReconciledTransfer' ? (
-              <Block>
-                <Trans>
-                  This transfer has a linked transaction in another account that
-                  is reconciled. Duplicating it may bring that account's
-                  reconciliation out of balance.
-                </Trans>
-              </Block>
-            ) : confirmReason === 'batchDuplicateWithReconciled' ? (
-              <Block>
-                <Trans>
-                  Duplicating reconciled transactions may bring your
-                  reconciliation out of balance.
-                </Trans>
-              </Block>
-            ) : confirmReason === 'editReconciled' ? (
-              <Block>
-                <Trans>
-                  Saving your changes to this reconciled transaction may bring
-                  your reconciliation out of balance.
-                </Trans>
-              </Block>
-            ) : confirmReason === 'unlockReconciled' ? (
-              <Block>
-                <Trans>
-                  Unlocking this transaction means you won't be warned about
-                  changes that can impact your reconciled balance. (Changes to
-                  amount, account, payee, etc).
-                </Trans>
-              </Block>
-            ) : confirmReason === 'deleteReconciled' ? (
-              <Block>
-                <Trans>
-                  Deleting reconciled transactions may bring your reconciliation
-                  out of balance.
-                </Trans>
-              </Block>
-            ) : (
-              <Block>
-                <Trans>Are you sure you want to edit this transaction?</Trans>
-              </Block>
-            )}
-            <View
-              style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <Button
-                aria-label={t('Cancel')}
+      <Modal
+        name="confirm-transaction-edit"
+        containerProps={{ style: { width: '30vw' } }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Reconciled Transaction')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ lineHeight: 1.5 }}>
+              {confirmReason === 'batchDeleteWithReconciledTransfer' ? (
+                <Block>
+                  <Trans>
+                    This transfer has a linked transaction in another account
+                    that is reconciled. Deleting it may bring that account's
+                    reconciliation out of balance.
+                  </Trans>
+                </Block>
+              ) : confirmReason === 'batchDeleteWithReconciled' ? (
+                <Block>
+                  <Trans>
+                    Deleting reconciled transactions may bring your
+                    reconciliation out of balance.
+                  </Trans>
+                </Block>
+              ) : confirmReason === 'batchEditWithReconciledTransfer' ? (
+                <Block>
+                  <Trans>
+                    This transfer has a linked transaction in another account
+                    that is reconciled. Editing it may bring that account's
+                    reconciliation out of balance.
+                  </Trans>
+                </Block>
+              ) : confirmReason === 'batchEditWithReconciled' ? (
+                <Block>
+                  <Trans>
+                    Editing reconciled transactions may bring your
+                    reconciliation out of balance.
+                  </Trans>
+                </Block>
+              ) : confirmReason === 'batchDuplicateWithReconciledTransfer' ? (
+                <Block>
+                  <Trans>
+                    This transfer has a linked transaction in another account
+                    that is reconciled. Duplicating it may bring that account's
+                    reconciliation out of balance.
+                  </Trans>
+                </Block>
+              ) : confirmReason === 'batchDuplicateWithReconciled' ? (
+                <Block>
+                  <Trans>
+                    Duplicating reconciled transactions may bring your
+                    reconciliation out of balance.
+                  </Trans>
+                </Block>
+              ) : confirmReason === 'editReconciled' ? (
+                <Block>
+                  <Trans>
+                    Saving your changes to this reconciled transaction may bring
+                    your reconciliation out of balance.
+                  </Trans>
+                </Block>
+              ) : confirmReason === 'unlockReconciled' ? (
+                <Block>
+                  <Trans>
+                    Unlocking this transaction means you won't be warned about
+                    changes that can impact your reconciled balance. (Changes to
+                    amount, account, payee, etc).
+                  </Trans>
+                </Block>
+              ) : confirmReason === 'deleteReconciled' ? (
+                <Block>
+                  <Trans>
+                    Deleting reconciled transactions may bring your
+                    reconciliation out of balance.
+                  </Trans>
+                </Block>
+              ) : (
+                <Block>
+                  <Trans>Are you sure you want to edit this transaction?</Trans>
+                </Block>
+              )}
+              <View
                 style={{
-                  marginRight: 10,
-                  ...narrowButtonStyle,
-                }}
-                onPress={() => {
-                  state.close();
-                  onCancel();
+                  marginTop: 20,
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
                 }}
               >
-                <Trans>Cancel</Trans>
-              </Button>
-              <InitialFocus>
                 <Button
-                  aria-label={t('Confirm')}
-                  variant="primary"
+                  aria-label={t('Cancel')}
                   style={{
                     marginRight: 10,
                     ...narrowButtonStyle,
                   }}
                   onPress={() => {
                     state.close();
-                    onConfirm();
+                    onCancel();
                   }}
                 >
-                  <Trans>Confirm</Trans>
+                  <Trans>Cancel</Trans>
                 </Button>
-              </InitialFocus>
+                <InitialFocus>
+                  <Button
+                    aria-label={t('Confirm')}
+                    variant="primary"
+                    style={{
+                      marginRight: 10,
+                      ...narrowButtonStyle,
+                    }}
+                    onPress={() => {
+                      state.close();
+                      onConfirm();
+                    }}
+                  >
+                    <Trans>Confirm</Trans>
+                  </Button>
+                </InitialFocus>
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

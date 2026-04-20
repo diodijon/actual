@@ -1,15 +1,14 @@
 // @ts-strict-ignore
 import React, { useEffect, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { SvgCheck } from '@actual-app/components/icons/v2';
 import { View } from '@actual-app/components/view';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Notes } from '#components/Notes';
 import { useNotes } from '#hooks/useNotes';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -31,64 +30,68 @@ export function NotesModal({ id, name, onSave }: NotesModalProps) {
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="notes"
-      containerProps={{
-        style: { height: '50vh' },
-      }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Notes: {{name}}', { name })}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-            }}
-          >
-            <Notes
-              notes={notes}
-              editable
-              focused
-              getStyle={() => ({
-                borderRadius: 6,
-                flex: 1,
-                minWidth: 0,
-              })}
-              onChange={setNotes}
+      <Modal
+        name="notes"
+        containerProps={{
+          style: { height: '50vh' },
+        }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Notes: {{name}}', { name })}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
             />
             <View
               style={{
+                flex: 1,
                 flexDirection: 'column',
-                alignItems: 'center',
-                justifyItems: 'center',
-                width: '100%',
-                paddingTop: 10,
               }}
             >
-              <Button
-                variant="primary"
+              <Notes
+                notes={notes}
+                editable
+                focused
+                getStyle={() => ({
+                  borderRadius: 6,
+                  flex: 1,
+                  minWidth: 0,
+                })}
+                onChange={setNotes}
+              />
+              <View
                 style={{
-                  fontSize: 17,
-                  fontWeight: 400,
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyItems: 'center',
                   width: '100%',
-                }}
-                onPress={() => {
-                  _onSave();
-                  state.close();
+                  paddingTop: 10,
                 }}
               >
-                <SvgCheck width={17} height={17} style={{ paddingRight: 5 }} />
-                <Trans>Save notes</Trans>
-              </Button>
+                <Button
+                  variant="primary"
+                  style={{
+                    fontSize: 17,
+                    fontWeight: 400,
+                    width: '100%',
+                  }}
+                  onPress={() => {
+                    _onSave();
+                    state.close();
+                  }}
+                >
+                  <SvgCheck
+                    width={17}
+                    height={17}
+                    style={{ paddingRight: 5 }}
+                  />
+                  <Trans>Save notes</Trans>
+                </Button>
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

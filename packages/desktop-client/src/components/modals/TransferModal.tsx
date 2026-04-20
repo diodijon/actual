@@ -1,8 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { InitialFocus } from '@actual-app/components/initial-focus';
@@ -15,6 +13,7 @@ import {
   removeCategoriesFromGroups,
 } from '#components/budget/util';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FieldLabel, TapField } from '#components/mobile/MobileForms';
 import { AmountInput } from '#components/util/AmountInput';
 import { useCategories } from '#hooks/useCategories';
@@ -85,66 +84,66 @@ export function TransferModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="transfer">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={title}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View>
+      <Modal name="transfer">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={title}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
             <View>
-              <FieldLabel title={t('Transfer this amount:')} />
-              <InitialFocus>
-                <AmountInput
-                  value={amount}
-                  autoDecimals={String(hideFraction) !== 'true'}
+              <View>
+                <FieldLabel title={t('Transfer this amount:')} />
+                <InitialFocus>
+                  <AmountInput
+                    value={amount}
+                    autoDecimals={String(hideFraction) !== 'true'}
+                    style={{
+                      marginLeft: styles.mobileEditingPadding,
+                      marginRight: styles.mobileEditingPadding,
+                    }}
+                    inputStyle={{
+                      height: styles.mobileMinHeight,
+                    }}
+                    onUpdate={setAmount}
+                    onEnter={() => {
+                      if (!toCategoryId) {
+                        openCategoryModal();
+                      }
+                    }}
+                  />
+                </InitialFocus>
+              </View>
+
+              <FieldLabel title="To:" />
+              <TapField value={toCategory?.name} onPress={openCategoryModal} />
+
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingTop: 10,
+                }}
+              >
+                <Button
+                  variant="primary"
                   style={{
+                    height: styles.mobileMinHeight,
                     marginLeft: styles.mobileEditingPadding,
                     marginRight: styles.mobileEditingPadding,
                   }}
-                  inputStyle={{
-                    height: styles.mobileMinHeight,
+                  onPress={() => {
+                    _onSubmit(amount, toCategoryId);
+                    state.close();
                   }}
-                  onUpdate={setAmount}
-                  onEnter={() => {
-                    if (!toCategoryId) {
-                      openCategoryModal();
-                    }
-                  }}
-                />
-              </InitialFocus>
+                >
+                  <Trans>Transfer</Trans>
+                </Button>
+              </View>
             </View>
-
-            <FieldLabel title="To:" />
-            <TapField value={toCategory?.name} onPress={openCategoryModal} />
-
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                paddingTop: 10,
-              }}
-            >
-              <Button
-                variant="primary"
-                style={{
-                  height: styles.mobileMinHeight,
-                  marginLeft: styles.mobileEditingPadding,
-                  marginRight: styles.mobileEditingPadding,
-                }}
-                onPress={() => {
-                  _onSubmit(amount, toCategoryId);
-                  state.close();
-                }}
-              >
-                <Trans>Transfer</Trans>
-              </Button>
-            </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

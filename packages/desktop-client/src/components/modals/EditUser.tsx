@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -16,6 +15,7 @@ import { PossibleRoles } from '@actual-app/core/shared/user';
 import type { NewUserEntity, UserEntity } from '@actual-app/core/types/models';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Checkbox, FormField, FormLabel } from '#components/forms';
 import { popModal } from '#modals/modalsSlice';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -126,31 +126,31 @@ export function EditUserFinanceApp({
   const isExistingUser = 'id' in defaultUser && !!defaultUser.id;
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="edit-user">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={
-              isExistingUser
-                ? t('Edit user {{userName}}', {
-                    userName: defaultUser.displayName ?? defaultUser.userName,
-                  })
-                : t('Add user')
-            }
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <EditUser
-            defaultUser={defaultUser}
-            onSave={async (method, user, setError) => {
-              if (await saveUser(method, user, setError)) {
-                originalOnSave(user);
-                state.close();
+      <Modal name="edit-user">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={
+                isExistingUser
+                  ? t('Edit user {{userName}}', {
+                      userName: defaultUser.displayName ?? defaultUser.userName,
+                    })
+                  : t('Add user')
               }
-            }}
-          />
-        </>
-      )}
-    </Modal>
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <EditUser
+              defaultUser={defaultUser}
+              onSave={async (method, user, setError) => {
+                if (await saveUser(method, user, setError)) {
+                  originalOnSave(user);
+                  state.close();
+                }
+              }}
+            />
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

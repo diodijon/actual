@@ -1,9 +1,7 @@
 import React from 'react';
 import type { CSSProperties } from 'react';
-import { Trans } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans } from 'react-i18next';
 
 import { styles } from '@actual-app/components/styles';
 import { Text } from '@actual-app/components/text';
@@ -21,6 +19,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { CellValueText } from '#components/spreadsheet/CellValue';
 import { useCategory } from '#hooks/useCategory';
 import type { Modal as ModalType } from '#modals/modalsSlice';
@@ -50,66 +49,66 @@ export function TrackingBalanceMenuModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="tracking-balance-menu">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={<ModalTitle title={category.name} shrinkOnOverflow />}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginBottom: 20,
-            }}
-          >
-            <Text
+      <Modal name="tracking-balance-menu">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={<ModalTitle title={category.name} shrinkOnOverflow />}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View
               style={{
-                fontSize: 17,
-                fontWeight: 400,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 20,
               }}
             >
-              <Trans>Balance</Trans>
-            </Text>
-            <BalanceWithCarryover
-              isDisabled
-              carryover={trackingBudget.catCarryover(categoryId)}
-              balance={trackingBudget.catBalance(categoryId)}
-              goal={trackingBudget.catGoal(categoryId)}
-              budgeted={trackingBudget.catBudgeted(categoryId)}
-              longGoal={trackingBudget.catLongGoal(categoryId)}
-              CarryoverIndicator={({ style }) => (
-                <CarryoverIndicator
-                  style={{
-                    width: 15,
-                    height: 15,
-                    display: 'inline-flex',
-                    position: 'relative',
-                    ...style,
-                  }}
-                />
-              )}
-            >
-              {props => (
-                <CellValueText
-                  {...props}
-                  style={{
-                    textAlign: 'center',
-                    ...styles.veryLargeText,
-                  }}
-                />
-              )}
-            </BalanceWithCarryover>
-          </View>
-          <BalanceMenu
-            categoryId={categoryId}
-            getItemStyle={() => defaultMenuItemStyle}
-            onCarryover={onCarryover}
-          />
-        </>
-      )}
-    </Modal>
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: 400,
+                }}
+              >
+                <Trans>Balance</Trans>
+              </Text>
+              <BalanceWithCarryover
+                isDisabled
+                carryover={trackingBudget.catCarryover(categoryId)}
+                balance={trackingBudget.catBalance(categoryId)}
+                goal={trackingBudget.catGoal(categoryId)}
+                budgeted={trackingBudget.catBudgeted(categoryId)}
+                longGoal={trackingBudget.catLongGoal(categoryId)}
+                CarryoverIndicator={({ style }) => (
+                  <CarryoverIndicator
+                    style={{
+                      width: 15,
+                      height: 15,
+                      display: 'inline-flex',
+                      position: 'relative',
+                      ...style,
+                    }}
+                  />
+                )}
+              >
+                {props => (
+                  <CellValueText
+                    {...props}
+                    style={{
+                      textAlign: 'center',
+                      ...styles.veryLargeText,
+                    }}
+                  />
+                )}
+              </BalanceWithCarryover>
+            </View>
+            <BalanceMenu
+              categoryId={categoryId}
+              getItemStyle={() => defaultMenuItemStyle}
+              onCarryover={onCarryover}
+            />
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

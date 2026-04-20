@@ -1,12 +1,12 @@
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useTranslation } from 'react-i18next';
 
 import { theme } from '@actual-app/components/theme';
 import type { NewRuleEntity, RuleEntity } from '@actual-app/core/types/models';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { RuleEditor } from '#components/rules/RuleEditor';
 
 type EditRuleModalProps = {
@@ -22,34 +22,34 @@ export function EditRuleModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="edit-rule">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Rule')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <RuleEditor
-            rule={defaultRule}
-            onSave={rule => {
-              originalOnSave?.(rule);
-              state.close();
-            }}
-            onCancel={() => state.close()}
-            style={{
-              maxWidth: '100%',
-              width: 900,
-              height: '80vh',
-              flexGrow: 0,
-              flexShrink: 0,
-              flexBasis: 'auto',
-              overflow: 'hidden',
-              color: theme.pageTextLight,
-            }}
-          />
-        </>
-      )}
-    </Modal>
+      <Modal name="edit-rule">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Rule')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <RuleEditor
+              rule={defaultRule}
+              onSave={rule => {
+                originalOnSave?.(rule);
+                state.close();
+              }}
+              onCancel={() => state.close()}
+              style={{
+                maxWidth: '100%',
+                width: 900,
+                height: '80vh',
+                flexGrow: 0,
+                flexShrink: 0,
+                flexBasis: 'auto',
+                overflow: 'hidden',
+                color: theme.pageTextLight,
+              }}
+            />
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

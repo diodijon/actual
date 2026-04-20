@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
@@ -31,6 +29,7 @@ import {
 import { Autocomplete } from '#components/autocomplete/Autocomplete';
 import type { AutocompleteItem } from '#components/autocomplete/Autocomplete';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FinancialText } from '#components/FinancialText';
 import { PrivacyFilter } from '#components/PrivacyFilter';
 import { Cell, Field, Row, Table, TableHeader } from '#components/table';
@@ -334,147 +333,151 @@ export function SelectLinkedAccountsModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="select-linked-accounts"
-      containerProps={{
-        style: isNarrowWidth
-          ? {
-              width: '100vw',
-              maxWidth: '100vw',
-              height: '100vh',
-              margin: 0,
-              display: 'flex',
-              flexDirection: 'column',
-            }
-          : { width: 1000 },
-      }}
-    >
-      {({ state }) => (
-        <View
-          style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-        >
-          <ModalHeader
-            title={t('Link Accounts')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-
-          <View
-            style={{
-              padding: isNarrowWidth ? '0 16px' : '0 20px',
-              flexShrink: 0,
-            }}
-          >
-            <Text style={{ marginBottom: 20 }}>
-              <Trans>
-                We found the following accounts. Select which ones you want to
-                add:
-              </Trans>
-            </Text>
-          </View>
-
-          {isNarrowWidth ? (
-            <View
-              style={{
-                flex: 1,
-                overflowY: 'auto',
-                padding: '0 16px',
+      <Modal
+        name="select-linked-accounts"
+        containerProps={{
+          style: isNarrowWidth
+            ? {
+                width: '100vw',
+                maxWidth: '100vw',
+                height: '100vh',
+                margin: 0,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 12,
+              }
+            : { width: 1000 },
+        }}
+      >
+        {({ state }) => (
+          <View
+            style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+          >
+            <ModalHeader
+              title={t('Link Accounts')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+
+            <View
+              style={{
+                padding: isNarrowWidth ? '0 16px' : '0 20px',
+                flexShrink: 0,
               }}
             >
-              {propsWithSortedExternalAccounts.externalAccounts.map(account => (
-                <AccountCard
-                  key={account.account_id}
-                  externalAccount={account}
-                  chosenAccount={getChosenAccount(account.account_id)}
-                  unlinkedAccounts={unlinkedAccounts}
-                  onSetLinkedAccount={onSetLinkedAccount}
-                  customStartingDate={getCustomStartingDate(account.account_id)}
-                  onSetCustomStartingDate={setCustomStartingDate}
-                />
-              ))}
+              <Text style={{ marginBottom: 20 }}>
+                <Trans>
+                  We found the following accounts. Select which ones you want to
+                  add:
+                </Trans>
+              </Text>
             </View>
-          ) : (
-            <View
-              style={{ ...styles.tableContainer, height: 300, flex: 'unset' }}
-            >
-              <TableHeader>
-                <Cell value={t('Institution to Sync')} width={150} />
-                <Cell value={t('Bank Account To Sync')} width={150} />
-                <Cell value={t('Balance')} width={120} />
-                <Cell value={t('Account in Actual')} width="flex" />
-                <Cell value={t('Starting Date')} width={120} />
-                <Cell value={t('Starting Balance')} width={120} />
-                <Cell value={t('Actions')} width={150} textAlign="center" />
-              </TableHeader>
 
-              <Table<ExternalAccount & { id: string }>
-                items={propsWithSortedExternalAccounts.externalAccounts.map(
-                  acc => ({ ...acc, id: acc.account_id }),
-                )}
-                style={{ backgroundColor: theme.tableHeaderBackground }}
-                renderItem={({ item }) => {
-                  const chosenAccount = getChosenAccount(item.account_id);
-                  // Only show starting options for new accounts being created
-                  const shouldShowStartingOptions = isNewAccountOption(
-                    chosenAccount?.id,
-                    addOnBudgetAccountOption.id,
-                    addOffBudgetAccountOption.id,
-                  );
-
-                  return (
-                    <TableRow
-                      key={item.id}
-                      externalAccount={item}
-                      chosenAccount={chosenAccount}
+            {isNarrowWidth ? (
+              <View
+                style={{
+                  flex: 1,
+                  overflowY: 'auto',
+                  padding: '0 16px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                }}
+              >
+                {propsWithSortedExternalAccounts.externalAccounts.map(
+                  account => (
+                    <AccountCard
+                      key={account.account_id}
+                      externalAccount={account}
+                      chosenAccount={getChosenAccount(account.account_id)}
                       unlinkedAccounts={unlinkedAccounts}
                       onSetLinkedAccount={onSetLinkedAccount}
                       customStartingDate={getCustomStartingDate(
-                        item.account_id,
+                        account.account_id,
                       )}
                       onSetCustomStartingDate={setCustomStartingDate}
-                      showStartingOptions={shouldShowStartingOptions}
                     />
-                  );
-                }}
-              />
-            </View>
-          )}
+                  ),
+                )}
+              </View>
+            ) : (
+              <View
+                style={{ ...styles.tableContainer, height: 300, flex: 'unset' }}
+              >
+                <TableHeader>
+                  <Cell value={t('Institution to Sync')} width={150} />
+                  <Cell value={t('Bank Account To Sync')} width={150} />
+                  <Cell value={t('Balance')} width={120} />
+                  <Cell value={t('Account in Actual')} width="flex" />
+                  <Cell value={t('Starting Date')} width={120} />
+                  <Cell value={t('Starting Balance')} width={120} />
+                  <Cell value={t('Actions')} width={150} textAlign="center" />
+                </TableHeader>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: isNarrowWidth ? 'center' : 'flex-end',
-              ...(isNarrowWidth
-                ? {
-                    padding: '16px',
-                    flexShrink: 0,
-                    borderTop: `1px solid ${theme.tableBorder}`,
-                  }
-                : { marginTop: 10 }),
-            }}
-          >
-            <Button
-              variant="primary"
-              onPress={onNext}
-              isDisabled={draftLinkAccounts.size === 0}
-              style={
-                isNarrowWidth
+                <Table<ExternalAccount & { id: string }>
+                  items={propsWithSortedExternalAccounts.externalAccounts.map(
+                    acc => ({ ...acc, id: acc.account_id }),
+                  )}
+                  style={{ backgroundColor: theme.tableHeaderBackground }}
+                  renderItem={({ item }) => {
+                    const chosenAccount = getChosenAccount(item.account_id);
+                    // Only show starting options for new accounts being created
+                    const shouldShowStartingOptions = isNewAccountOption(
+                      chosenAccount?.id,
+                      addOnBudgetAccountOption.id,
+                      addOffBudgetAccountOption.id,
+                    );
+
+                    return (
+                      <TableRow
+                        key={item.id}
+                        externalAccount={item}
+                        chosenAccount={chosenAccount}
+                        unlinkedAccounts={unlinkedAccounts}
+                        onSetLinkedAccount={onSetLinkedAccount}
+                        customStartingDate={getCustomStartingDate(
+                          item.account_id,
+                        )}
+                        onSetCustomStartingDate={setCustomStartingDate}
+                        showStartingOptions={shouldShowStartingOptions}
+                      />
+                    );
+                  }}
+                />
+              </View>
+            )}
+
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: isNarrowWidth ? 'center' : 'flex-end',
+                ...(isNarrowWidth
                   ? {
-                      width: '100%',
-                      height: '44px',
-                      fontSize: '1em',
+                      padding: '16px',
+                      flexShrink: 0,
+                      borderTop: `1px solid ${theme.tableBorder}`,
                     }
-                  : undefined
-              }
+                  : { marginTop: 10 }),
+              }}
             >
-              {label}
-            </Button>
+              <Button
+                variant="primary"
+                onPress={onNext}
+                isDisabled={draftLinkAccounts.size === 0}
+                style={
+                  isNarrowWidth
+                    ? {
+                        width: '100%',
+                        height: '44px',
+                        fontSize: '1em',
+                      }
+                    : undefined
+                }
+              >
+                {label}
+              </Button>
+            </View>
           </View>
-        </View>
-      )}
-    </Modal>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

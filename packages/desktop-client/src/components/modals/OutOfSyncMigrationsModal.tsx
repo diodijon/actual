@@ -1,8 +1,6 @@
 import React from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { Paragraph } from '@actual-app/components/paragraph';
@@ -12,6 +10,7 @@ import { View } from '@actual-app/components/view';
 import { closeBudget } from '#budgetfiles/budgetfilesSlice';
 import { Link } from '#components/common/Link';
 import { Modal, ModalHeader, ModalTitle } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useDispatch } from '#redux';
 
 export function OutOfSyncMigrationsModal() {
@@ -26,71 +25,71 @@ export function OutOfSyncMigrationsModal() {
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="out-of-sync-migrations">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={<ModalTitle title={t('Please update Actual!')} />}
-          />
-          <View
-            style={{
-              padding: 15,
-              gap: 15,
-              paddingTop: 0,
-              paddingBottom: 25,
-              maxWidth: 550,
-              lineHeight: '1.5em',
-            }}
-          >
-            <Text>
-              <Paragraph style={{ fontSize: 16 }}>
-                <Trans>
-                  It looks like you&apos;re using an outdated version of the
-                  Actual client. Your budget data has been updated by another
-                  client, but this client is still on the old version. For the
-                  best experience, please update Actual to the latest version.
-                </Trans>
-              </Paragraph>
-            </Text>
-
-            <Paragraph
-              style={{
-                fontSize: 16,
-              }}
-            >
-              <Trans>
-                If you can&apos;t update Actual at this time you can find the
-                latest release at{' '}
-                <Link variant="external" to="https://app.actualbudget.org">
-                  app.actualbudget.org
-                </Link>
-                . You can use it until your client is updated.
-              </Trans>
-            </Paragraph>
-
+      <Modal name="out-of-sync-migrations">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={<ModalTitle title={t('Please update Actual!')} />}
+            />
             <View
               style={{
-                display: 'flex',
-                gap: '1rem',
-                alignItems: 'center',
-                justifyContent: 'center',
-                flexDirection: 'row',
+                padding: 15,
+                gap: 15,
+                paddingTop: 0,
+                paddingBottom: 25,
+                maxWidth: 550,
+                lineHeight: '1.5em',
               }}
             >
-              <Button
-                variant="primary"
+              <Text>
+                <Paragraph style={{ fontSize: 16 }}>
+                  <Trans>
+                    It looks like you&apos;re using an outdated version of the
+                    Actual client. Your budget data has been updated by another
+                    client, but this client is still on the old version. For the
+                    best experience, please update Actual to the latest version.
+                  </Trans>
+                </Paragraph>
+              </Text>
+
+              <Paragraph
                 style={{
-                  padding: '10px 30px',
+                  fontSize: 16,
                 }}
-                onPress={() => closeBudgetAndModal(() => state.close())}
               >
-                <Trans>Close Budget</Trans>
-              </Button>
+                <Trans>
+                  If you can&apos;t update Actual at this time you can find the
+                  latest release at{' '}
+                  <Link variant="external" to="https://app.actualbudget.org">
+                    app.actualbudget.org
+                  </Link>
+                  . You can use it until your client is updated.
+                </Trans>
+              </Paragraph>
+
+              <View
+                style={{
+                  display: 'flex',
+                  gap: '1rem',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                }}
+              >
+                <Button
+                  variant="primary"
+                  style={{
+                    padding: '10px 30px',
+                  }}
+                  onPress={() => closeBudgetAndModal(() => state.close())}
+                >
+                  <Trans>Close Budget</Trans>
+                </Button>
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

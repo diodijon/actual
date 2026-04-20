@@ -1,9 +1,8 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { CSSProperties, FormEvent } from 'react';
 import { Form } from 'react-aria-components';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -23,6 +22,7 @@ import { AccountAutocomplete } from '#components/autocomplete/AccountAutocomplet
 import { CategoryAutocomplete } from '#components/autocomplete/CategoryAutocomplete';
 import { Link } from '#components/common/Link';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useAccounts } from '#hooks/useAccounts';
 import { useCategories } from '#hooks/useCategories';
 import { pushModal } from '#modals/modalsSlice';
@@ -123,122 +123,76 @@ export function CloseAccountModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="close-account"
-      isLoading={loading}
-      containerProps={{ style: { width: '30vw' } }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Close Account')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View>
-            <Paragraph>
-              <Trans>
-                Are you sure you want to close{' '}
-                <strong>
-                  {{ accountName: account.name } as TransObjectLiteral}
-                </strong>
-                ?{' '}
-              </Trans>
-              {canDelete ? (
-                <span>
-                  <Trans>
-                    This account has no transactions so it will be permanently
-                    deleted.
-                  </Trans>
-                </span>
-              ) : (
-                <span>
-                  <Trans>
-                    This account has transactions so we can't permanently delete
-                    it.
-                  </Trans>
-                </span>
-              )}
-            </Paragraph>
-            <Form
-              onSubmit={e => {
-                if (onSubmit(e)) {
-                  state.close();
-                }
-              }}
-            >
-              {balance !== 0 && (
-                <View>
-                  <Paragraph>
+      <Modal
+        name="close-account"
+        isLoading={loading}
+        containerProps={{ style: { width: '30vw' } }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Close Account')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View>
+              <Paragraph>
+                <Trans>
+                  Are you sure you want to close{' '}
+                  <strong>
+                    {{ accountName: account.name } as TransObjectLiteral}
+                  </strong>
+                  ?{' '}
+                </Trans>
+                {canDelete ? (
+                  <span>
                     <Trans>
-                      This account has a balance of{' '}
-                      <strong>
-                        {
-                          {
-                            balance: integerToCurrency(balance),
-                          } as TransObjectLiteral
-                        }
-                      </strong>
-                      . To close this account, select a different account to
-                      transfer this balance to:
+                      This account has no transactions so it will be permanently
+                      deleted.
                     </Trans>
-                  </Paragraph>
+                  </span>
+                ) : (
+                  <span>
+                    <Trans>
+                      This account has transactions so we can't permanently
+                      delete it.
+                    </Trans>
+                  </span>
+                )}
+              </Paragraph>
+              <Form
+                onSubmit={e => {
+                  if (onSubmit(e)) {
+                    state.close();
+                  }
+                }}
+              >
+                {balance !== 0 && (
+                  <View>
+                    <Paragraph>
+                      <Trans>
+                        This account has a balance of{' '}
+                        <strong>
+                          {
+                            {
+                              balance: integerToCurrency(balance),
+                            } as TransObjectLiteral
+                          }
+                        </strong>
+                        . To close this account, select a different account to
+                        transfer this balance to:
+                      </Trans>
+                    </Paragraph>
 
-                  <View style={{ marginBottom: 15 }}>
-                    <AccountAutocomplete
-                      includeClosedAccounts={false}
-                      hiddenAccounts={[account.id]}
-                      value={transferAccountId}
-                      inputProps={{
-                        placeholder: t('Select account...'),
-                        autoFocus: true,
-                        ...(isNarrowWidth && {
-                          value: transferAccount?.name || '',
-                          style: {
-                            ...narrowStyle,
-                          },
-                          onClick: () => {
-                            dispatch(
-                              pushModal({
-                                modal: {
-                                  name: 'account-autocomplete',
-                                  options: {
-                                    includeClosedAccounts: false,
-                                    hiddenAccounts: [account.id],
-                                    onSelect: onSelectAccount,
-                                  },
-                                },
-                              }),
-                            );
-                          },
-                        }),
-                      }}
-                      onSelect={onSelectAccount}
-                    />
-                  </View>
-
-                  {transferError && (
-                    <FormError style={{ marginBottom: 15 }}>
-                      <Trans>Transfer is required</Trans>
-                    </FormError>
-                  )}
-
-                  {needsCategory(account, transferAccountId, accounts) && (
                     <View style={{ marginBottom: 15 }}>
-                      <Paragraph>
-                        <Trans>
-                          Since you are transferring the balance from an on
-                          budget account to an off budget account, this
-                          transaction must be categorized. Select a category:
-                        </Trans>
-                      </Paragraph>
-
-                      <CategoryAutocomplete
-                        categoryGroups={categoryGroups}
-                        value={categoryId}
+                      <AccountAutocomplete
+                        includeClosedAccounts={false}
+                        hiddenAccounts={[account.id]}
+                        value={transferAccountId}
                         inputProps={{
-                          placeholder: t('Select category...'),
+                          placeholder: t('Select account...'),
+                          autoFocus: true,
                           ...(isNarrowWidth && {
-                            value: category?.name || '',
+                            value: transferAccount?.name || '',
                             style: {
                               ...narrowStyle,
                             },
@@ -246,11 +200,11 @@ export function CloseAccountModal({
                               dispatch(
                                 pushModal({
                                   modal: {
-                                    name: 'category-autocomplete',
+                                    name: 'account-autocomplete',
                                     options: {
-                                      categoryGroups,
-                                      showHiddenCategories: true,
-                                      onSelect: onSelectCategory,
+                                      includeClosedAccounts: false,
+                                      hiddenAccounts: [account.id],
+                                      onSelect: onSelectAccount,
                                     },
                                   },
                                 }),
@@ -258,76 +212,126 @@ export function CloseAccountModal({
                             },
                           }),
                         }}
-                        onSelect={onSelectCategory}
+                        onSelect={onSelectAccount}
                       />
-
-                      {categoryError && (
-                        <FormError>
-                          <Trans>Category is required</Trans>
-                        </FormError>
-                      )}
                     </View>
-                  )}
-                </View>
-              )}
 
-              {!canDelete && (
-                <View style={{ marginBottom: 15 }}>
-                  <Text style={{ fontSize: 12 }}>
-                    <Trans>
-                      You can also{' '}
-                      <Link
-                        variant="text"
-                        onClick={() => {
-                          setLoading(true);
-                          closeAccount.mutate({
-                            id: account.id,
-                            forced: true,
-                          });
-                          state.close();
-                        }}
-                        style={{ color: theme.errorText }}
-                      >
-                        force close
-                      </Link>{' '}
-                      the account which will delete it and all its transactions
-                      permanently. Doing so may change your budget unexpectedly
-                      since money in it may vanish.
-                    </Trans>
-                  </Text>
-                </View>
-              )}
+                    {transferError && (
+                      <FormError style={{ marginBottom: 15 }}>
+                        <Trans>Transfer is required</Trans>
+                      </FormError>
+                    )}
 
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'flex-end',
-                }}
-              >
-                <Button
+                    {needsCategory(account, transferAccountId, accounts) && (
+                      <View style={{ marginBottom: 15 }}>
+                        <Paragraph>
+                          <Trans>
+                            Since you are transferring the balance from an on
+                            budget account to an off budget account, this
+                            transaction must be categorized. Select a category:
+                          </Trans>
+                        </Paragraph>
+
+                        <CategoryAutocomplete
+                          categoryGroups={categoryGroups}
+                          value={categoryId}
+                          inputProps={{
+                            placeholder: t('Select category...'),
+                            ...(isNarrowWidth && {
+                              value: category?.name || '',
+                              style: {
+                                ...narrowStyle,
+                              },
+                              onClick: () => {
+                                dispatch(
+                                  pushModal({
+                                    modal: {
+                                      name: 'category-autocomplete',
+                                      options: {
+                                        categoryGroups,
+                                        showHiddenCategories: true,
+                                        onSelect: onSelectCategory,
+                                      },
+                                    },
+                                  }),
+                                );
+                              },
+                            }),
+                          }}
+                          onSelect={onSelectCategory}
+                        />
+
+                        {categoryError && (
+                          <FormError>
+                            <Trans>Category is required</Trans>
+                          </FormError>
+                        )}
+                      </View>
+                    )}
+                  </View>
+                )}
+
+                {!canDelete && (
+                  <View style={{ marginBottom: 15 }}>
+                    <Text style={{ fontSize: 12 }}>
+                      <Trans>
+                        You can also{' '}
+                        <Link
+                          variant="text"
+                          onClick={() => {
+                            setLoading(true);
+                            closeAccount.mutate({
+                              id: account.id,
+                              forced: true,
+                            });
+                            state.close();
+                          }}
+                          style={{ color: theme.errorText }}
+                        >
+                          force close
+                        </Link>{' '}
+                        the account which will delete it and all its
+                        transactions permanently. Doing so may change your
+                        budget unexpectedly since money in it may vanish.
+                      </Trans>
+                    </Text>
+                  </View>
+                )}
+
+                <View
                   style={{
-                    marginRight: 10,
-                    height: isNarrowWidth ? styles.mobileMinHeight : undefined,
-                  }}
-                  onPress={() => state.close()}
-                >
-                  <Trans>Cancel</Trans>
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  style={{
-                    height: isNarrowWidth ? styles.mobileMinHeight : undefined,
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
                   }}
                 >
-                  <Trans>Close Account</Trans>
-                </Button>
-              </View>
-            </Form>
-          </View>
-        </>
-      )}
-    </Modal>
+                  <Button
+                    style={{
+                      marginRight: 10,
+                      height: isNarrowWidth
+                        ? styles.mobileMinHeight
+                        : undefined,
+                    }}
+                    onPress={() => state.close()}
+                  >
+                    <Trans>Cancel</Trans>
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    style={{
+                      height: isNarrowWidth
+                        ? styles.mobileMinHeight
+                        : undefined,
+                    }}
+                  >
+                    <Trans>Close Account</Trans>
+                  </Button>
+                </View>
+              </Form>
+            </View>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

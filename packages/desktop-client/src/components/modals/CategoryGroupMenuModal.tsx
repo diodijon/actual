@@ -1,8 +1,7 @@
 // @ts-strict-ignore
 import React, { useRef, useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { ComponentProps } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -32,6 +31,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { CategoryGroupActionMenu } from '#components/mobile/budget/CategoryGroupActionMenu';
 import { Notes } from '#components/Notes';
 import { useCategories } from '#hooks/useCategories';
@@ -127,130 +127,130 @@ export function CategoryGroupMenuModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="category-group-menu"
-      onClose={onClose}
-      containerProps={{
-        style: {
-          height: '45vh',
-        },
-      }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            leftContent={
-              <AdditionalCategoryGroupMenu
-                group={group}
-                onDelete={_onDelete}
-                onToggleVisibility={_onToggleVisibility}
-              />
-            }
-            title={
-              <ModalTitle
-                isEditable
-                title={group.name}
-                onTitleUpdate={onRename}
-              />
-            }
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-            }}
-          >
-            <View
-              style={{
-                overflowY: 'auto',
-                flex: 1,
-              }}
-            >
-              <Notes
-                notes={notes?.length > 0 ? notes : t('No notes')}
-                editable={false}
-                focused={false}
-                getStyle={() => ({
-                  ...styles.mediumText,
-                  borderRadius: 6,
-                  ...((!notes || notes.length === 0) && {
-                    justifySelf: 'center',
-                    alignSelf: 'center',
-                    color: theme.pageTextSubdued,
-                  }),
-                })}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                alignContent: 'space-between',
-                paddingTop: 10,
-              }}
-            >
-              <Button style={buttonStyle} onPress={_onAddCategory}>
-                <SvgAdd width={17} height={17} style={{ paddingRight: 5 }} />
-                <Trans>Add category</Trans>
-              </Button>
-              <Button style={buttonStyle} onPress={_onEditNotes}>
-                <SvgNotesPaper
-                  width={20}
-                  height={20}
-                  style={{ paddingRight: 5 }}
+      <Modal
+        name="category-group-menu"
+        onClose={onClose}
+        containerProps={{
+          style: {
+            height: '45vh',
+          },
+        }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              leftContent={
+                <AdditionalCategoryGroupMenu
+                  group={group}
+                  onDelete={_onDelete}
+                  onToggleVisibility={_onToggleVisibility}
                 />
-                <Trans>Edit notes</Trans>
-              </Button>
-              {isGoalTemplatesEnabled && (
-                <Button
-                  variant="bare"
-                  className={css([
-                    actionButtonStyle,
-                    {
-                      '&[data-pressed], &[data-hovered]': {
-                        backgroundColor: 'transparent',
-                        color: buttonStyle.color,
-                      },
-                    },
-                  ])}
-                  onPress={onShowMore}
-                >
-                  {!showMore ? (
-                    <SvgCheveronUp
-                      width={30}
-                      height={30}
-                      style={{ paddingRight: 5 }}
-                    />
-                  ) : (
-                    <SvgCheveronDown
-                      width={30}
-                      height={30}
-                      style={{ paddingRight: 5 }}
-                    />
-                  )}
-                  <Trans>Actions</Trans>
+              }
+              title={
+                <ModalTitle
+                  isEditable
+                  title={group.name}
+                  onTitleUpdate={onRename}
+                />
+              }
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+              }}
+            >
+              <View
+                style={{
+                  overflowY: 'auto',
+                  flex: 1,
+                }}
+              >
+                <Notes
+                  notes={notes?.length > 0 ? notes : t('No notes')}
+                  editable={false}
+                  focused={false}
+                  getStyle={() => ({
+                    ...styles.mediumText,
+                    borderRadius: 6,
+                    ...((!notes || notes.length === 0) && {
+                      justifySelf: 'center',
+                      alignSelf: 'center',
+                      color: theme.pageTextSubdued,
+                    }),
+                  })}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  alignContent: 'space-between',
+                  paddingTop: 10,
+                }}
+              >
+                <Button style={buttonStyle} onPress={_onAddCategory}>
+                  <SvgAdd width={17} height={17} style={{ paddingRight: 5 }} />
+                  <Trans>Add category</Trans>
                 </Button>
+                <Button style={buttonStyle} onPress={_onEditNotes}>
+                  <SvgNotesPaper
+                    width={20}
+                    height={20}
+                    style={{ paddingRight: 5 }}
+                  />
+                  <Trans>Edit notes</Trans>
+                </Button>
+                {isGoalTemplatesEnabled && (
+                  <Button
+                    variant="bare"
+                    className={css([
+                      actionButtonStyle,
+                      {
+                        '&[data-pressed], &[data-hovered]': {
+                          backgroundColor: 'transparent',
+                          color: buttonStyle.color,
+                        },
+                      },
+                    ])}
+                    onPress={onShowMore}
+                  >
+                    {!showMore ? (
+                      <SvgCheveronUp
+                        width={30}
+                        height={30}
+                        style={{ paddingRight: 5 }}
+                      />
+                    ) : (
+                      <SvgCheveronDown
+                        width={30}
+                        height={30}
+                        style={{ paddingRight: 5 }}
+                      />
+                    )}
+                    <Trans>Actions</Trans>
+                  </Button>
+                )}
+              </View>
+              {showMore && (
+                <CategoryGroupActionMenu
+                  style={{ overflowY: 'auto', paddingTop: 10 }}
+                  getItemStyle={() => defaultMenuItemStyle}
+                  onApplyBudgetTemplatesInGroup={() => {
+                    _onApplyBudgetTemplatesInGroup();
+                    state.close();
+                    showUndoNotification({
+                      message: t('budget templates have been applied.'),
+                    });
+                  }}
+                />
               )}
             </View>
-            {showMore && (
-              <CategoryGroupActionMenu
-                style={{ overflowY: 'auto', paddingTop: 10 }}
-                getItemStyle={() => defaultMenuItemStyle}
-                onApplyBudgetTemplatesInGroup={() => {
-                  _onApplyBudgetTemplatesInGroup();
-                  state.close();
-                  showUndoNotification({
-                    message: t('budget templates have been applied.'),
-                  });
-                }}
-              />
-            )}
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

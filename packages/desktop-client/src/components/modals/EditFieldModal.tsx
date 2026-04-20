@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { CSSProperties, ReactNode } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -17,6 +16,7 @@ import {
 import { format as formatDate, parse as parseDate, parseISO } from 'date-fns';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { SectionLabel } from '#components/forms';
 import { LabeledCheckbox } from '#components/forms/LabeledCheckbox';
 import { DateSelect } from '#components/select/DateSelect';
@@ -261,47 +261,49 @@ export function EditFieldModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="edit-field"
-      noAnimation={!isNarrowWidth}
-      onClose={onClose}
-      containerProps={{
-        style: {
-          height: isNarrowWidth
-            ? 'calc(var(--visual-viewport-height) * 0.85)'
-            : 275,
-          padding: '15px 10px',
-          ...(minWidth && { minWidth }),
-          backgroundColor: theme.menuAutoCompleteBackground,
-        },
-      }}
-    >
-      {({ state }) => (
-        <>
-          {isNarrowWidth && (
-            <ModalHeader
-              title={label}
-              rightContent={<ModalCloseButton onPress={() => state.close()} />}
-            />
-          )}
-          <View>
-            {!isNarrowWidth && (
-              <SectionLabel
+      <Modal
+        name="edit-field"
+        noAnimation={!isNarrowWidth}
+        onClose={onClose}
+        containerProps={{
+          style: {
+            height: isNarrowWidth
+              ? 'calc(var(--visual-viewport-height) * 0.85)'
+              : 275,
+            padding: '15px 10px',
+            ...(minWidth && { minWidth }),
+            backgroundColor: theme.menuAutoCompleteBackground,
+          },
+        }}
+      >
+        {({ state }) => (
+          <>
+            {isNarrowWidth && (
+              <ModalHeader
                 title={label}
-                style={{
-                  alignSelf: 'center',
-                  color: theme.menuAutoCompleteText,
-                  marginBottom: 10,
-                }}
+                rightContent={
+                  <ModalCloseButton onPress={() => state.close()} />
+                }
               />
             )}
-            <View style={{ flex: 1 }}>
-              {editor({ close: () => state.close() })}
+            <View>
+              {!isNarrowWidth && (
+                <SectionLabel
+                  title={label}
+                  style={{
+                    alignSelf: 'center',
+                    color: theme.menuAutoCompleteText,
+                    marginBottom: 10,
+                  }}
+                />
+              )}
+              <View style={{ flex: 1 }}>
+                {editor({ close: () => state.close() })}
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

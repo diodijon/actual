@@ -1,6 +1,5 @@
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useTranslation } from 'react-i18next';
 
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
@@ -14,6 +13,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { SectionLabel } from '#components/forms';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
@@ -36,65 +36,65 @@ export function AccountAutocompleteModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="account-autocomplete"
-      noAnimation={!isNarrowWidth}
-      onClose={onClose}
-      containerProps={{
-        style: {
-          height: isNarrowWidth
-            ? 'calc(var(--visual-viewport-height) * 0.85)'
-            : 275,
-          backgroundColor: theme.menuAutoCompleteBackground,
-        },
-      }}
-    >
-      {({ state }) => (
-        <>
-          {isNarrowWidth && (
-            <ModalHeader
-              title={
-                <ModalTitle
-                  title={t('Account')}
-                  getStyle={() => ({ color: theme.menuAutoCompleteText })}
-                />
-              }
-              rightContent={
-                <ModalCloseButton
-                  onPress={() => state.close()}
-                  style={{ color: theme.menuAutoCompleteText }}
-                />
-              }
-            />
-          )}
-          <View>
-            {!isNarrowWidth && (
-              <SectionLabel
-                title={t('Account')}
-                style={{
-                  alignSelf: 'center',
-                  color: theme.menuAutoCompleteText,
-                  marginBottom: 10,
-                }}
+      <Modal
+        name="account-autocomplete"
+        noAnimation={!isNarrowWidth}
+        onClose={onClose}
+        containerProps={{
+          style: {
+            height: isNarrowWidth
+              ? 'calc(var(--visual-viewport-height) * 0.85)'
+              : 275,
+            backgroundColor: theme.menuAutoCompleteBackground,
+          },
+        }}
+      >
+        {({ state }) => (
+          <>
+            {isNarrowWidth && (
+              <ModalHeader
+                title={
+                  <ModalTitle
+                    title={t('Account')}
+                    getStyle={() => ({ color: theme.menuAutoCompleteText })}
+                  />
+                }
+                rightContent={
+                  <ModalCloseButton
+                    onPress={() => state.close()}
+                    style={{ color: theme.menuAutoCompleteText }}
+                  />
+                }
               />
             )}
-            <View style={{ flex: 1 }}>
-              <AccountAutocomplete
-                focused
-                embedded
-                closeOnBlur={false}
-                onClose={() => state.close()}
-                {...defaultAutocompleteProps}
-                onSelect={onSelect}
-                includeClosedAccounts={includeClosedAccounts}
-                hiddenAccounts={hiddenAccounts}
-                value={null}
-              />
+            <View>
+              {!isNarrowWidth && (
+                <SectionLabel
+                  title={t('Account')}
+                  style={{
+                    alignSelf: 'center',
+                    color: theme.menuAutoCompleteText,
+                    marginBottom: 10,
+                  }}
+                />
+              )}
+              <View style={{ flex: 1 }}>
+                <AccountAutocomplete
+                  focused
+                  embedded
+                  closeOnBlur={false}
+                  onClose={() => state.close()}
+                  {...defaultAutocompleteProps}
+                  onSelect={onSelect}
+                  includeClosedAccounts={includeClosedAccounts}
+                  hiddenAccounts={hiddenAccounts}
+                  value={null}
+                />
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

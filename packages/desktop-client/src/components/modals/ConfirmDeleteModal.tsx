@@ -1,6 +1,5 @@
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -11,6 +10,7 @@ import { styles } from '@actual-app/components/styles';
 import { View } from '@actual-app/components/view';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
 type ConfirmDeleteModalProps = Extract<
@@ -32,47 +32,47 @@ export function ConfirmDeleteModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="confirm-delete">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Confirm Delete')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ lineHeight: 1.5 }}>
-            <Paragraph>{message}</Paragraph>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <Button
+      <Modal name="confirm-delete">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Confirm Delete')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ lineHeight: 1.5 }}>
+              <Paragraph>{message}</Paragraph>
+              <View
                 style={{
-                  marginRight: 10,
-                  ...narrowButtonStyle,
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
                 }}
-                onPress={() => state.close()}
               >
-                <Trans>Cancel</Trans>
-              </Button>
-              <InitialFocus>
                 <Button
-                  variant="primary"
-                  style={narrowButtonStyle}
-                  onPress={() => {
-                    onConfirm();
-                    state.close();
+                  style={{
+                    marginRight: 10,
+                    ...narrowButtonStyle,
                   }}
+                  onPress={() => state.close()}
                 >
-                  <Trans>Delete</Trans>
+                  <Trans>Cancel</Trans>
                 </Button>
-              </InitialFocus>
+                <InitialFocus>
+                  <Button
+                    variant="primary"
+                    style={narrowButtonStyle}
+                    onPress={() => {
+                      onConfirm();
+                      state.close();
+                    }}
+                  >
+                    <Trans>Delete</Trans>
+                  </Button>
+                </InitialFocus>
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

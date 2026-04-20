@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { ComponentProps } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -9,6 +8,7 @@ import { Menu } from '@actual-app/components/menu';
 import { View } from '@actual-app/components/view';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useDashboardPages } from '#hooks/useDashboardPages';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
@@ -30,44 +30,44 @@ export function CopyWidgetToDashboardModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="copy-widget-to-dashboard">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Copy to dashboard')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
+      <Modal name="copy-widget-to-dashboard">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Copy to dashboard')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
 
-          <View style={{ lineHeight: 1.5 }}>
-            {items.length ? (
-              <Menu
-                items={items}
-                onMenuSelect={item => {
-                  onSelect(item);
-                  state.close();
+            <View style={{ lineHeight: 1.5 }}>
+              {items.length ? (
+                <Menu
+                  items={items}
+                  onMenuSelect={item => {
+                    onSelect(item);
+                    state.close();
+                  }}
+                />
+              ) : (
+                <View>
+                  <Trans>No other dashboard pages available.</Trans>
+                </View>
+              )}
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  marginTop: 15,
                 }}
-              />
-            ) : (
-              <View>
-                <Trans>No other dashboard pages available.</Trans>
+              >
+                <Button onPress={() => state.close()}>
+                  <Trans>Cancel</Trans>
+                </Button>
               </View>
-            )}
-
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-                marginTop: 15,
-              }}
-            >
-              <Button onPress={() => state.close()}>
-                <Trans>Cancel</Trans>
-              </Button>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

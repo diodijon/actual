@@ -1,5 +1,6 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
@@ -11,6 +12,7 @@ import { View } from '@actual-app/components/view';
 
 import { importBudget } from '#budgetfiles/budgetfilesSlice';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useNavigate } from '#hooks/useNavigate';
 import { useDispatch } from '#redux';
 
@@ -50,52 +52,56 @@ export function ImportYNAB4Modal() {
   }
 
   return (
-    <Modal name="import-ynab4" containerProps={{ style: { width: 400 } }}>
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Import from YNAB4')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ ...styles.smallText, lineHeight: 1.5, marginTop: 20 }}>
-            {error && (
-              <Block style={{ color: theme.errorText, marginBottom: 15 }}>
-                {getErrorMessage(error)}
-              </Block>
-            )}
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
+      <Modal name="import-ynab4" containerProps={{ style: { width: 400 } }}>
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Import from YNAB4')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View
+              style={{ ...styles.smallText, lineHeight: 1.5, marginTop: 20 }}
+            >
+              {error && (
+                <Block style={{ color: theme.errorText, marginBottom: 15 }}>
+                  {getErrorMessage(error)}
+                </Block>
+              )}
 
-            <View style={{ alignItems: 'center' }}>
-              <Paragraph>
-                <Trans>
-                  To import data from YNAB4, locate where your YNAB4 data is
-                  stored. It is usually in your Documents folder under YNAB.
-                  Your data is a directory inside that with the
-                  <code>.ynab4</code> suffix.
-                </Trans>
-              </Paragraph>
-              <Paragraph>
-                <Trans>
-                  When you've located your data,{' '}
-                  <strong>compress it into a zip file</strong>. On macOS,
-                  right-click the folder and select "Compress". On Windows,
-                  right-click and select "Send to &rarr; Compressed (zipped)
-                  folder". Upload the zipped folder for importing.
-                </Trans>
-              </Paragraph>
-              <View>
-                <ButtonWithLoading
-                  variant="primary"
-                  autoFocus
-                  isLoading={importing}
-                  onPress={onImport}
-                >
-                  <Trans>Select zip file...</Trans>
-                </ButtonWithLoading>
+              <View style={{ alignItems: 'center' }}>
+                <Paragraph>
+                  <Trans>
+                    To import data from YNAB4, locate where your YNAB4 data is
+                    stored. It is usually in your Documents folder under YNAB.
+                    Your data is a directory inside that with the
+                    <code>.ynab4</code> suffix.
+                  </Trans>
+                </Paragraph>
+                <Paragraph>
+                  <Trans>
+                    When you've located your data,{' '}
+                    <strong>compress it into a zip file</strong>. On macOS,
+                    right-click the folder and select "Compress". On Windows,
+                    right-click and select "Send to &rarr; Compressed (zipped)
+                    folder". Upload the zipped folder for importing.
+                  </Trans>
+                </Paragraph>
+                <View>
+                  <ButtonWithLoading
+                    variant="primary"
+                    autoFocus
+                    isLoading={importing}
+                    onPress={onImport}
+                  >
+                    <Trans>Select zip file...</Trans>
+                  </ButtonWithLoading>
+                </View>
               </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
+    </ErrorBoundary>
   );
 }

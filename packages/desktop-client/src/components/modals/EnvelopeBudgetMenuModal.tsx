@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import type { CSSProperties } from 'react';
-import { Trans } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import {
@@ -27,6 +25,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FocusableAmountInput } from '#components/mobile/transactions/FocusableAmountInput';
 import { Notes } from '#components/Notes';
 import { useCategory } from '#hooks/useCategory';
@@ -101,114 +100,114 @@ export function EnvelopeBudgetMenuModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="envelope-budget-menu">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={<ModalTitle title={category.name} shrinkOnOverflow />}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Text
+      <Modal name="envelope-budget-menu">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={<ModalTitle title={category.name} shrinkOnOverflow />}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View
               style={{
-                fontSize: 17,
-                fontWeight: 400,
+                justifyContent: 'center',
+                alignItems: 'center',
               }}
             >
-              <Trans>Budgeted</Trans>
-            </Text>
-            <FocusableAmountInput
-              value={integerToAmount(budgeted || 0)}
-              focused={amountFocused}
-              onFocus={() => setAmountFocused(true)}
-              onBlur={() => setAmountFocused(false)}
-              onEnter={() => state.close()}
-              zeroSign="+"
-              focusedStyle={{
-                width: 'auto',
-                padding: '5px',
-                paddingLeft: '20px',
-                paddingRight: '20px',
-                minWidth: '100%',
-              }}
-              textStyle={{ ...styles.veryLargeText, textAlign: 'center' }}
-              onUpdateAmount={_onUpdateBudget}
-              data-testid="budget-amount"
-            />
-          </View>
-          <View
-            style={{
-              display: showMore ? 'none' : undefined,
-              overflowY: 'auto',
-              flex: 1,
-            }}
-          >
-            <Notes
-              notes={originalNotes.length > 0 ? originalNotes : t('No notes')}
-              editable={false}
-              focused={false}
-              getStyle={() => ({
-                borderRadius: 6,
-                ...(originalNotes.length === 0 && {
-                  justifySelf: 'center',
-                  alignSelf: 'center',
-                  color: theme.pageTextSubdued,
-                }),
-              })}
-            />
-          </View>
-          <View
-            style={{
-              display: showMore ? 'none' : undefined,
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between',
-              alignContent: 'space-between',
-            }}
-          >
-            <Button style={buttonStyle} onPress={_onEditNotes}>
-              <SvgNotesPaper
-                width={20}
-                height={20}
-                style={{ paddingRight: 5 }}
+              <Text
+                style={{
+                  fontSize: 17,
+                  fontWeight: 400,
+                }}
+              >
+                <Trans>Budgeted</Trans>
+              </Text>
+              <FocusableAmountInput
+                value={integerToAmount(budgeted || 0)}
+                focused={amountFocused}
+                onFocus={() => setAmountFocused(true)}
+                onBlur={() => setAmountFocused(false)}
+                onEnter={() => state.close()}
+                zeroSign="+"
+                focusedStyle={{
+                  width: 'auto',
+                  padding: '5px',
+                  paddingLeft: '20px',
+                  paddingRight: '20px',
+                  minWidth: '100%',
+                }}
+                textStyle={{ ...styles.veryLargeText, textAlign: 'center' }}
+                onUpdateAmount={_onUpdateBudget}
+                data-testid="budget-amount"
               />
-              <Trans>Edit notes</Trans>
-            </Button>
-          </View>
-          <View>
-            <Button variant="bare" style={buttonStyle} onPress={onShowMore}>
-              {!showMore ? (
-                <SvgCheveronUp
-                  width={30}
-                  height={30}
+            </View>
+            <View
+              style={{
+                display: showMore ? 'none' : undefined,
+                overflowY: 'auto',
+                flex: 1,
+              }}
+            >
+              <Notes
+                notes={originalNotes.length > 0 ? originalNotes : t('No notes')}
+                editable={false}
+                focused={false}
+                getStyle={() => ({
+                  borderRadius: 6,
+                  ...(originalNotes.length === 0 && {
+                    justifySelf: 'center',
+                    alignSelf: 'center',
+                    color: theme.pageTextSubdued,
+                  }),
+                })}
+              />
+            </View>
+            <View
+              style={{
+                display: showMore ? 'none' : undefined,
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignContent: 'space-between',
+              }}
+            >
+              <Button style={buttonStyle} onPress={_onEditNotes}>
+                <SvgNotesPaper
+                  width={20}
+                  height={20}
                   style={{ paddingRight: 5 }}
                 />
-              ) : (
-                <SvgCheveronDown
-                  width={30}
-                  height={30}
-                  style={{ paddingRight: 5 }}
-                />
-              )}
-              <Trans>Actions</Trans>
-            </Button>
-          </View>
-          {showMore && (
-            <BudgetMenu
-              getItemStyle={() => defaultMenuItemStyle}
-              onCopyLastMonthAverage={onCopyLastMonthAverage}
-              onSetMonthsAverage={onSetMonthsAverage}
-              onApplyBudgetTemplate={onApplyBudgetTemplate}
-            />
-          )}
-        </>
-      )}
-    </Modal>
+                <Trans>Edit notes</Trans>
+              </Button>
+            </View>
+            <View>
+              <Button variant="bare" style={buttonStyle} onPress={onShowMore}>
+                {!showMore ? (
+                  <SvgCheveronUp
+                    width={30}
+                    height={30}
+                    style={{ paddingRight: 5 }}
+                  />
+                ) : (
+                  <SvgCheveronDown
+                    width={30}
+                    height={30}
+                    style={{ paddingRight: 5 }}
+                  />
+                )}
+                <Trans>Actions</Trans>
+              </Button>
+            </View>
+            {showMore && (
+              <BudgetMenu
+                getItemStyle={() => defaultMenuItemStyle}
+                onCopyLastMonthAverage={onCopyLastMonthAverage}
+                onSetMonthsAverage={onSetMonthsAverage}
+                onApplyBudgetTemplate={onApplyBudgetTemplate}
+              />
+            )}
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

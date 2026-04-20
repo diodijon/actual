@@ -1,8 +1,6 @@
 import { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { Label } from '@actual-app/components/label';
@@ -17,6 +15,7 @@ import type { OpenIdConfig } from '@actual-app/core/types/models';
 import { closeBudget } from '#budgetfiles/budgetfilesSlice';
 import { Error } from '#components/alerts';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { OpenIdForm } from '#components/manager/subscribe/OpenIdForm';
 import { useRefreshLoginMethods } from '#components/ServerContext';
 import { popModal } from '#modals/modalsSlice';
@@ -65,56 +64,58 @@ export function OpenIDEnableModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="enable-openid">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Enable OpenID')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-
-          <View style={{ flexDirection: 'column' }}>
-            <OpenIdForm
-              onSetOpenId={onSave}
-              otherButtons={[
-                <Button
-                  key="cancel"
-                  variant="bare"
-                  style={{ marginRight: 10 }}
-                  onPress={() => dispatch(popModal())}
-                >
-                  <Trans>Cancel</Trans>
-                </Button>,
-              ]}
-            />
-            <Label
-              style={{
-                ...styles.verySmallText,
-                color: theme.pageTextLight,
-                paddingTop: 5,
-              }}
-              title={t('After enabling OpenID all sessions will be closed')}
-            />
-            <Label
-              style={{
-                ...styles.verySmallText,
-                color: theme.pageTextLight,
-              }}
-              title={t('The first user to login will become the server owner')}
-            />
-            <Label
-              style={{
-                ...styles.verySmallText,
-                color: theme.warningText,
-              }}
-              title={t('The current password will be disabled')}
+      <Modal name="enable-openid">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Enable OpenID')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
             />
 
-            {error && <Error>{error}</Error>}
-          </View>
-        </>
-      )}
-    </Modal>
+            <View style={{ flexDirection: 'column' }}>
+              <OpenIdForm
+                onSetOpenId={onSave}
+                otherButtons={[
+                  <Button
+                    key="cancel"
+                    variant="bare"
+                    style={{ marginRight: 10 }}
+                    onPress={() => dispatch(popModal())}
+                  >
+                    <Trans>Cancel</Trans>
+                  </Button>,
+                ]}
+              />
+              <Label
+                style={{
+                  ...styles.verySmallText,
+                  color: theme.pageTextLight,
+                  paddingTop: 5,
+                }}
+                title={t('After enabling OpenID all sessions will be closed')}
+              />
+              <Label
+                style={{
+                  ...styles.verySmallText,
+                  color: theme.pageTextLight,
+                }}
+                title={t(
+                  'The first user to login will become the server owner',
+                )}
+              />
+              <Label
+                style={{
+                  ...styles.verySmallText,
+                  color: theme.warningText,
+                }}
+                title={t('The current password will be disabled')}
+              />
+
+              {error && <Error>{error}</Error>}
+            </View>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

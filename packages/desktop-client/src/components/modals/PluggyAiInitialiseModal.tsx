@@ -1,9 +1,7 @@
 // @ts-strict-ignore
 import React, { useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { ButtonWithLoading } from '@actual-app/components/button';
 import { InitialFocus } from '@actual-app/components/initial-focus';
@@ -21,6 +19,7 @@ import {
   ModalCloseButton,
   ModalHeader,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FormField, FormLabel } from '#components/forms';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
@@ -103,95 +102,95 @@ export const PluggyAiInitialiseModal = ({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="pluggyai-init" containerProps={{ style: { width: '30vw' } }}>
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Set-up Pluggy.ai')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ display: 'flex', gap: 10 }}>
-            <Text>
-              <Trans>
-                In order to enable bank sync via Pluggy.ai (only for Brazilian
-                banks) you will need to create access credentials. This can be
-                done by creating an account with{' '}
-                <Link
-                  variant="external"
-                  to="https://actualbudget.org/docs/advanced/bank-sync/"
-                  linkColor="purple"
-                >
-                  Pluggy.ai
-                </Link>
-                .
-              </Trans>
-            </Text>
+      <Modal name="pluggyai-init" containerProps={{ style: { width: '30vw' } }}>
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Set-up Pluggy.ai')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ display: 'flex', gap: 10 }}>
+              <Text>
+                <Trans>
+                  In order to enable bank sync via Pluggy.ai (only for Brazilian
+                  banks) you will need to create access credentials. This can be
+                  done by creating an account with{' '}
+                  <Link
+                    variant="external"
+                    to="https://actualbudget.org/docs/advanced/bank-sync/"
+                    linkColor="purple"
+                  >
+                    Pluggy.ai
+                  </Link>
+                  .
+                </Trans>
+              </Text>
 
-            <FormField>
-              <FormLabel title={t('Client ID:')} htmlFor="client-id-field" />
-              <InitialFocus>
+              <FormField>
+                <FormLabel title={t('Client ID:')} htmlFor="client-id-field" />
+                <InitialFocus>
+                  <Input
+                    id="client-id-field"
+                    type="text"
+                    value={clientId}
+                    onChangeValue={value => {
+                      setClientId(value);
+                      setIsValid(true);
+                    }}
+                  />
+                </InitialFocus>
+              </FormField>
+
+              <FormField>
+                <FormLabel
+                  title={t('Client Secret:')}
+                  htmlFor="client-secret-field"
+                />
                 <Input
-                  id="client-id-field"
-                  type="text"
-                  value={clientId}
+                  id="client-secret-field"
+                  type="password"
+                  value={clientSecret}
                   onChangeValue={value => {
-                    setClientId(value);
+                    setClientSecret(value);
                     setIsValid(true);
                   }}
                 />
-              </InitialFocus>
-            </FormField>
+              </FormField>
 
-            <FormField>
-              <FormLabel
-                title={t('Client Secret:')}
-                htmlFor="client-secret-field"
-              />
-              <Input
-                id="client-secret-field"
-                type="password"
-                value={clientSecret}
-                onChangeValue={value => {
-                  setClientSecret(value);
-                  setIsValid(true);
+              <FormField>
+                <FormLabel
+                  title={t('Item Ids (comma separated):')}
+                  htmlFor="item-ids-field"
+                />
+                <Input
+                  id="item-ids-field"
+                  type="text"
+                  value={itemIds}
+                  placeholder="78a3db91-2b6f-4f33-914f-0c5f29c5e6b1, 47cdfe32-bef9-4b82-9ea5-41b89f207749"
+                  onChangeValue={value => {
+                    setItemIds(value);
+                    setIsValid(true);
+                  }}
+                />
+              </FormField>
+
+              {!isValid && <Error>{error}</Error>}
+            </View>
+
+            <ModalButtons>
+              <ButtonWithLoading
+                variant="primary"
+                isLoading={isLoading}
+                onPress={() => {
+                  void onSubmit(() => state.close());
                 }}
-              />
-            </FormField>
-
-            <FormField>
-              <FormLabel
-                title={t('Item Ids (comma separated):')}
-                htmlFor="item-ids-field"
-              />
-              <Input
-                id="item-ids-field"
-                type="text"
-                value={itemIds}
-                placeholder="78a3db91-2b6f-4f33-914f-0c5f29c5e6b1, 47cdfe32-bef9-4b82-9ea5-41b89f207749"
-                onChangeValue={value => {
-                  setItemIds(value);
-                  setIsValid(true);
-                }}
-              />
-            </FormField>
-
-            {!isValid && <Error>{error}</Error>}
-          </View>
-
-          <ModalButtons>
-            <ButtonWithLoading
-              variant="primary"
-              isLoading={isLoading}
-              onPress={() => {
-                void onSubmit(() => state.close());
-              }}
-            >
-              <Trans>Save and continue</Trans>
-            </ButtonWithLoading>
-          </ModalButtons>
-        </>
-      )}
-    </Modal>
+              >
+                <Trans>Save and continue</Trans>
+              </ButtonWithLoading>
+            </ModalButtons>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 };

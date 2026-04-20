@@ -1,9 +1,7 @@
 import { useMemo, useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
 import { SvgArrowLeft } from '@actual-app/components/icons/v1';
@@ -16,6 +14,7 @@ import * as Platform from '@actual-app/core/shared/platform';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
 import { Search } from '#components/common/Search';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 
 type KeyIconProps = {
   shortcut: string;
@@ -462,143 +461,146 @@ export function KeyboardShortcutModal() {
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="keyboard-shortcuts" containerProps={{ style: { width: 700 } }}>
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={
-              isSearching
-                ? t('Search results')
-                : currentCategory
-                  ? t('{{categoryName}} shortcuts', {
-                      categoryName: currentCategory.name,
-                    })
-                  : t('Keyboard shortcuts')
-            }
-            leftContent={
-              showingShortcuts ? (
-                <Button
-                  variant="bare"
-                  onClick={() => {
-                    setSearchText('');
-                    setSelectedCategoryId(null);
-                  }}
-                  style={{ marginRight: 10, marginLeft: 15, zIndex: 3000 }}
-                >
-                  <SvgArrowLeft
-                    width={10}
-                    height={10}
-                    style={{ marginRight: 5, color: 'currentColor' }}
-                  />
-                  <Trans>Back</Trans>
-                </Button>
-              ) : null
-            }
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              flexDirection: 'column',
-              fontSize: 13,
-              padding: '0 16px 16px 16px',
-            }}
-          >
-            <InitialFocus>
-              <Search
-                value={searchText}
-                isInModal
-                onChange={text => {
-                  setSearchText(text);
-                  // Clear category selection when searching to search all shortcuts
-                  if (text && selectedCategoryId) {
-                    setSelectedCategoryId(null);
-                  }
-                }}
-                placeholder={t('Search shortcuts')}
-                width="100%"
-                style={{
-                  backgroundColor: theme.tableBackground,
-                  borderColor: theme.formInputBorder,
-                  marginBottom: 10,
-                }}
-              />
-            </InitialFocus>
+      <Modal
+        name="keyboard-shortcuts"
+        containerProps={{ style: { width: 700 } }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={
+                isSearching
+                  ? t('Search results')
+                  : currentCategory
+                    ? t('{{categoryName}} shortcuts', {
+                        categoryName: currentCategory.name,
+                      })
+                    : t('Keyboard shortcuts')
+              }
+              leftContent={
+                showingShortcuts ? (
+                  <Button
+                    variant="bare"
+                    onClick={() => {
+                      setSearchText('');
+                      setSelectedCategoryId(null);
+                    }}
+                    style={{ marginRight: 10, marginLeft: 15, zIndex: 3000 }}
+                  >
+                    <SvgArrowLeft
+                      width={10}
+                      height={10}
+                      style={{ marginRight: 5, color: 'currentColor' }}
+                    />
+                    <Trans>Back</Trans>
+                  </Button>
+                ) : null
+              }
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
             <View
               style={{
                 flexDirection: 'column',
-                overflowY: 'auto',
-                maxHeight: '40vh',
-                height: 400,
-                backgroundColor: theme.tableBackground,
-                border: `1px solid ${theme.tableBorder}`,
-                borderRadius: baseStyles.menuBorderRadius,
+                fontSize: 13,
+                padding: '0 16px 16px 16px',
               }}
             >
-              {itemsToShow.length === 0 ? (
-                <View
-                  style={{
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    padding: 20,
+              <InitialFocus>
+                <Search
+                  value={searchText}
+                  isInModal
+                  onChange={text => {
+                    setSearchText(text);
+                    // Clear category selection when searching to search all shortcuts
+                    if (text && selectedCategoryId) {
+                      setSelectedCategoryId(null);
+                    }
                   }}
-                >
-                  <Text style={{ fontSize: 15 }}>
-                    <Trans>
-                      {isSearching
-                        ? 'No matching shortcuts'
-                        : isInCategory
-                          ? 'No shortcuts in this category'
-                          : 'No matching shortcuts'}
-                    </Trans>
-                  </Text>
-                </View>
-              ) : showingShortcuts ? (
-                (itemsToShow as Shortcut[]).map(shortcut => (
-                  <ShortcutListItem
-                    key={shortcut.id}
-                    shortcut={shortcut.shortcut}
-                    description={shortcut.description}
-                    meta={shortcut.meta}
-                    shift={shortcut.shift}
-                    style={shortcut.style}
-                  />
-                ))
-              ) : (
-                (itemsToShow as ShortcutCategories[]).map(category => (
-                  <ListItem
-                    key={category.id}
-                    onClick={() => {
-                      if (category.items.length > 0) {
-                        setSelectedCategoryId(category.id);
-                      }
+                  placeholder={t('Search shortcuts')}
+                  width="100%"
+                  style={{
+                    backgroundColor: theme.tableBackground,
+                    borderColor: theme.formInputBorder,
+                    marginBottom: 10,
+                  }}
+                />
+              </InitialFocus>
+              <View
+                style={{
+                  flexDirection: 'column',
+                  overflowY: 'auto',
+                  maxHeight: '40vh',
+                  height: 400,
+                  backgroundColor: theme.tableBackground,
+                  border: `1px solid ${theme.tableBorder}`,
+                  borderRadius: baseStyles.menuBorderRadius,
+                }}
+              >
+                {itemsToShow.length === 0 ? (
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 20,
                     }}
                   >
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        width: '100%',
+                    <Text style={{ fontSize: 15 }}>
+                      <Trans>
+                        {isSearching
+                          ? 'No matching shortcuts'
+                          : isInCategory
+                            ? 'No shortcuts in this category'
+                            : 'No matching shortcuts'}
+                      </Trans>
+                    </Text>
+                  </View>
+                ) : showingShortcuts ? (
+                  (itemsToShow as Shortcut[]).map(shortcut => (
+                    <ShortcutListItem
+                      key={shortcut.id}
+                      shortcut={shortcut.shortcut}
+                      description={shortcut.description}
+                      meta={shortcut.meta}
+                      shift={shortcut.shift}
+                      style={shortcut.style}
+                    />
+                  ))
+                ) : (
+                  (itemsToShow as ShortcutCategories[]).map(category => (
+                    <ListItem
+                      key={category.id}
+                      onClick={() => {
+                        if (category.items.length > 0) {
+                          setSelectedCategoryId(category.id);
+                        }
                       }}
                     >
-                      <Text style={{ fontWeight: 'bold' }}>
-                        {category.name}
-                      </Text>
-                      <Text style={{ color: theme.pageTextLight }}>
-                        {category.items.length}{' '}
-                        {category.items.length === 1
-                          ? t('shortcut')
-                          : t('shortcuts')}{' '}
-                        ›
-                      </Text>
-                    </View>
-                  </ListItem>
-                ))
-              )}
+                      <View
+                        style={{
+                          flexDirection: 'row',
+                          justifyContent: 'space-between',
+                          width: '100%',
+                        }}
+                      >
+                        <Text style={{ fontWeight: 'bold' }}>
+                          {category.name}
+                        </Text>
+                        <Text style={{ color: theme.pageTextLight }}>
+                          {category.items.length}{' '}
+                          {category.items.length === 1
+                            ? t('shortcut')
+                            : t('shortcuts')}{' '}
+                          ›
+                        </Text>
+                      </View>
+                    </ListItem>
+                  ))
+                )}
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

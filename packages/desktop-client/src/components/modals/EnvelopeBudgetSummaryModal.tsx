@@ -1,8 +1,6 @@
 import React from 'react';
-import { useTranslation } from 'react-i18next';
-
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
+import { useTranslation } from 'react-i18next';
 
 import { styles } from '@actual-app/components/styles';
 import {
@@ -16,6 +14,7 @@ import { ToBudgetAmount } from '#components/budget/envelope/budgetsummary/ToBudg
 import { TotalsList } from '#components/budget/envelope/budgetsummary/TotalsList';
 import { useEnvelopeSheetValue } from '#components/budget/envelope/EnvelopeBudgetComponents';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useCategoriesById } from '#hooks/useCategories';
 import { useFormat } from '#hooks/useFormat';
 import { useLocale } from '#hooks/useLocale';
@@ -156,36 +155,36 @@ export function EnvelopeBudgetSummaryModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="envelope-budget-summary">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Budget Summary')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <SheetNameProvider name={sheetForMonth(month)}>
-            <TotalsList
-              prevMonthName={prevMonthName}
-              style={{
-                ...styles.mediumText,
-              }}
+      <Modal name="envelope-budget-summary">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Budget Summary')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
             />
-            <ToBudgetAmount
-              prevMonthName={prevMonthName}
-              style={{
-                ...styles.mediumText,
-                marginTop: 15,
-              }}
-              amountStyle={{
-                ...styles.underlinedText,
-              }}
-              onClick={() => onClick({ close: () => state.close() })}
-              isTotalsListTooltipDisabled
-            />
-          </SheetNameProvider>
-        </>
-      )}
-    </Modal>
+            <SheetNameProvider name={sheetForMonth(month)}>
+              <TotalsList
+                prevMonthName={prevMonthName}
+                style={{
+                  ...styles.mediumText,
+                }}
+              />
+              <ToBudgetAmount
+                prevMonthName={prevMonthName}
+                style={{
+                  ...styles.mediumText,
+                  marginTop: 15,
+                }}
+                amountStyle={{
+                  ...styles.underlinedText,
+                }}
+                onClick={() => onClick({ close: () => state.close() })}
+                isTotalsListTooltipDisabled
+              />
+            </SheetNameProvider>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

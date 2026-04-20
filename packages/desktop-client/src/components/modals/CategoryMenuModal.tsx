@@ -1,8 +1,7 @@
 // @ts-strict-ignore
 import React, { useRef, useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { CSSProperties } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -27,6 +26,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Notes } from '#components/Notes';
 import { useCategory } from '#hooks/useCategory';
 import { useCategoryGroup } from '#hooks/useCategoryGroup';
@@ -82,83 +82,83 @@ export function CategoryMenuModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="category-menu"
-      onClose={onClose}
-      containerProps={{
-        style: { height: '45vh' },
-      }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            leftContent={
-              <AdditionalCategoryMenu
-                category={category}
-                categoryGroup={categoryGroup}
-                onDelete={_onDelete}
-                onToggleVisibility={_onToggleVisibility}
-              />
-            }
-            title={
-              <ModalTitle
-                isEditable
-                title={category.name}
-                onTitleUpdate={onRename}
-              />
-            }
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-            }}
-          >
-            <View
-              style={{
-                overflowY: 'auto',
-                flex: 1,
-              }}
-            >
-              <Notes
-                notes={
-                  originalNotes?.length > 0 ? originalNotes : t('No notes')
-                }
-                editable={false}
-                focused={false}
-                getStyle={() => ({
-                  borderRadius: 6,
-                  ...((!originalNotes || originalNotes.length === 0) && {
-                    justifySelf: 'center',
-                    alignSelf: 'center',
-                    color: theme.pageTextSubdued,
-                  }),
-                })}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                alignContent: 'space-between',
-                paddingTop: 10,
-              }}
-            >
-              <Button style={buttonStyle} onPress={_onEditNotes}>
-                <SvgNotesPaper
-                  width={20}
-                  height={20}
-                  style={{ paddingRight: 5 }}
+      <Modal
+        name="category-menu"
+        onClose={onClose}
+        containerProps={{
+          style: { height: '45vh' },
+        }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              leftContent={
+                <AdditionalCategoryMenu
+                  category={category}
+                  categoryGroup={categoryGroup}
+                  onDelete={_onDelete}
+                  onToggleVisibility={_onToggleVisibility}
                 />
-                <Trans>Edit notes</Trans>
-              </Button>
+              }
+              title={
+                <ModalTitle
+                  isEditable
+                  title={category.name}
+                  onTitleUpdate={onRename}
+                />
+              }
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+              }}
+            >
+              <View
+                style={{
+                  overflowY: 'auto',
+                  flex: 1,
+                }}
+              >
+                <Notes
+                  notes={
+                    originalNotes?.length > 0 ? originalNotes : t('No notes')
+                  }
+                  editable={false}
+                  focused={false}
+                  getStyle={() => ({
+                    borderRadius: 6,
+                    ...((!originalNotes || originalNotes.length === 0) && {
+                      justifySelf: 'center',
+                      alignSelf: 'center',
+                      color: theme.pageTextSubdued,
+                    }),
+                  })}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  alignContent: 'space-between',
+                  paddingTop: 10,
+                }}
+              >
+                <Button style={buttonStyle} onPress={_onEditNotes}>
+                  <SvgNotesPaper
+                    width={20}
+                    height={20}
+                    style={{ paddingRight: 5 }}
+                  />
+                  <Trans>Edit notes</Trans>
+                </Button>
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -10,6 +11,7 @@ import { View } from '@actual-app/components/view';
 
 import { loadAllFiles } from '#budgetfiles/budgetfilesSlice';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { useGlobalPref } from '#hooks/useGlobalPref';
 import { pushModal } from '#modals/modalsSlice';
 import { useDispatch } from '#redux';
@@ -157,43 +159,45 @@ export function FilesSettingsModal() {
   }
 
   return (
-    <Modal name="files-settings">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Settings')}
-            rightContent={
-              <ModalCloseButton
-                onPress={() => closeModal(() => state.close())}
-              />
-            }
-          />
-          <View
-            style={{
-              padding: 15,
-              gap: 15,
-              paddingTop: 0,
-              paddingBottom: 25,
-              maxWidth: 550,
-              lineHeight: '1.5em',
-            }}
-          >
-            <FileLocationSettings />
-            <SelfSignedCertLocationSettings />
-            <Button
-              variant="primary"
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
+      <Modal name="files-settings">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Settings')}
+              rightContent={
+                <ModalCloseButton
+                  onPress={() => closeModal(() => state.close())}
+                />
+              }
+            />
+            <View
               style={{
-                padding: '10px 30px',
-                fontSize: 14,
-                alignSelf: 'center',
+                padding: 15,
+                gap: 15,
+                paddingTop: 0,
+                paddingBottom: 25,
+                maxWidth: 550,
+                lineHeight: '1.5em',
               }}
-              onPress={() => closeModal(() => state.close())}
             >
-              <Trans>OK</Trans>
-            </Button>
-          </View>
-        </>
-      )}
-    </Modal>
+              <FileLocationSettings />
+              <SelfSignedCertLocationSettings />
+              <Button
+                variant="primary"
+                style={{
+                  padding: '10px 30px',
+                  fontSize: 14,
+                  alignSelf: 'center',
+                }}
+                onPress={() => closeModal(() => state.close())}
+              >
+                <Trans>OK</Trans>
+              </Button>
+            </View>
+          </>
+        )}
+      </Modal>
+    </ErrorBoundary>
   );
 }

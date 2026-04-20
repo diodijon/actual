@@ -1,6 +1,5 @@
 import React from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Block } from '@actual-app/components/block';
@@ -12,6 +11,7 @@ import { theme } from '@actual-app/components/theme';
 import { View } from '@actual-app/components/view';
 
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { Modal as ModalType } from '#modals/modalsSlice';
 
 type ConvertToScheduleModalProps = Extract<
@@ -37,90 +37,90 @@ export function ConvertToScheduleModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="convert-to-schedule"
-      containerProps={{ style: { width: '30vw' } }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={t('Convert to Schedule')}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View style={{ lineHeight: 1.5 }}>
-            <Block>
-              <Trans>
-                This transaction has a future date. Would you like to convert it
-                to a single-time schedule instead?
-              </Trans>
-            </Block>
-            {isBeyondWindow ? (
-              <Block
-                style={{
-                  marginTop: 10,
-                  padding: 10,
-                  backgroundColor: theme.warningBackground,
-                  borderRadius: 4,
-                }}
-              >
+      <Modal
+        name="convert-to-schedule"
+        containerProps={{ style: { width: '30vw' } }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={t('Convert to Schedule')}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View style={{ lineHeight: 1.5 }}>
+              <Block>
                 <Trans>
-                  <strong>Warning:</strong> This transaction is{' '}
-                  {{ daysUntilTransaction }} days away, which is beyond your
-                  configured upcoming length of {{ upcomingDays }} days. The
-                  schedule preview will not be visible in your account until it
-                  gets closer to the date.
+                  This transaction has a future date. Would you like to convert
+                  it to a single-time schedule instead?
                 </Trans>
               </Block>
-            ) : (
-              <Block style={{ marginTop: 10 }}>
-                <Trans>
-                  The transaction will appear as a schedule preview in your
-                  account.
-                </Trans>
-              </Block>
-            )}
-            <View
-              style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                justifyContent: 'flex-end',
-              }}
-            >
-              <Button
-                aria-label={t('Cancel')}
-                style={{
-                  marginRight: 10,
-                  ...narrowButtonStyle,
-                  ...(isNarrowWidth && { flex: 1 }),
-                }}
-                onPress={() => {
-                  state.close();
-                  onCancel?.();
-                }}
-              >
-                <Trans>No, keep as transaction</Trans>
-              </Button>
-              <InitialFocus>
-                <Button
-                  aria-label={t('Convert to Schedule')}
-                  variant="primary"
+              {isBeyondWindow ? (
+                <Block
                   style={{
+                    marginTop: 10,
+                    padding: 10,
+                    backgroundColor: theme.warningBackground,
+                    borderRadius: 4,
+                  }}
+                >
+                  <Trans>
+                    <strong>Warning:</strong> This transaction is{' '}
+                    {{ daysUntilTransaction }} days away, which is beyond your
+                    configured upcoming length of {{ upcomingDays }} days. The
+                    schedule preview will not be visible in your account until
+                    it gets closer to the date.
+                  </Trans>
+                </Block>
+              ) : (
+                <Block style={{ marginTop: 10 }}>
+                  <Trans>
+                    The transaction will appear as a schedule preview in your
+                    account.
+                  </Trans>
+                </Block>
+              )}
+              <View
+                style={{
+                  marginTop: 20,
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                }}
+              >
+                <Button
+                  aria-label={t('Cancel')}
+                  style={{
+                    marginRight: 10,
                     ...narrowButtonStyle,
                     ...(isNarrowWidth && { flex: 1 }),
                   }}
                   onPress={() => {
                     state.close();
-                    onConfirm();
+                    onCancel?.();
                   }}
                 >
-                  <Trans>Yes, create schedule</Trans>
+                  <Trans>No, keep as transaction</Trans>
                 </Button>
-              </InitialFocus>
+                <InitialFocus>
+                  <Button
+                    aria-label={t('Convert to Schedule')}
+                    variant="primary"
+                    style={{
+                      ...narrowButtonStyle,
+                      ...(isNarrowWidth && { flex: 1 }),
+                    }}
+                    onPress={() => {
+                      state.close();
+                      onConfirm();
+                    }}
+                  >
+                    <Trans>Yes, create schedule</Trans>
+                  </Button>
+                </InitialFocus>
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

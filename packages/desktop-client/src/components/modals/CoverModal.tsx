@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -14,6 +13,7 @@ import {
   removeCategoriesFromGroups,
 } from '#components/budget/util';
 import { Modal, ModalCloseButton, ModalHeader } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { FieldLabel, TapField } from '#components/mobile/MobileForms';
 import { AmountInput } from '#components/util/AmountInput';
 import { useCategories } from '#hooks/useCategories';
@@ -92,66 +92,69 @@ export function CoverModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="cover">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={title}
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View>
-            <FieldLabel title={t('Cover this amount:')} />
-            <InitialFocus>
-              <AmountInput
-                value={amount}
-                autoDecimals={String(hideFraction) !== 'true'}
+      <Modal name="cover">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={title}
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View>
+              <FieldLabel title={t('Cover this amount:')} />
+              <InitialFocus>
+                <AmountInput
+                  value={amount}
+                  autoDecimals={String(hideFraction) !== 'true'}
+                  style={{
+                    marginLeft: styles.mobileEditingPadding,
+                    marginRight: styles.mobileEditingPadding,
+                  }}
+                  inputStyle={{
+                    height: styles.mobileMinHeight,
+                  }}
+                  onUpdate={setAmount}
+                  onEnter={() => {
+                    if (!fromCategoryId) {
+                      openCategoryModal();
+                    }
+                  }}
+                />
+              </InitialFocus>
+            </View>
+
+            <View>
+              <FieldLabel title={t('From:')} />
+              <TapField
+                value={fromCategory?.name}
+                onPress={openCategoryModal}
+              />
+            </View>
+
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                paddingTop: 10,
+              }}
+            >
+              <Button
+                variant="primary"
                 style={{
+                  height: styles.mobileMinHeight,
                   marginLeft: styles.mobileEditingPadding,
                   marginRight: styles.mobileEditingPadding,
                 }}
-                inputStyle={{
-                  height: styles.mobileMinHeight,
+                onPress={() => {
+                  _onSubmit();
+                  state.close();
                 }}
-                onUpdate={setAmount}
-                onEnter={() => {
-                  if (!fromCategoryId) {
-                    openCategoryModal();
-                  }
-                }}
-              />
-            </InitialFocus>
-          </View>
-
-          <View>
-            <FieldLabel title={t('From:')} />
-            <TapField value={fromCategory?.name} onPress={openCategoryModal} />
-          </View>
-
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              paddingTop: 10,
-            }}
-          >
-            <Button
-              variant="primary"
-              style={{
-                height: styles.mobileMinHeight,
-                marginLeft: styles.mobileEditingPadding,
-                marginRight: styles.mobileEditingPadding,
-              }}
-              onPress={() => {
-                _onSubmit();
-                state.close();
-              }}
-            >
-              <Trans>Transfer</Trans>
-            </Button>
-          </View>
-        </>
-      )}
-    </Modal>
+              >
+                <Trans>Transfer</Trans>
+              </Button>
+            </View>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

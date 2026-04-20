@@ -1,9 +1,8 @@
 // @ts-strict-ignore
 import { useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { FormEvent } from 'react';
 import { Form } from 'react-aria-components';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -25,6 +24,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Checkbox } from '#components/forms';
 import { validateAccountName } from '#components/util/accountValidation';
 import { useAccounts } from '#hooks/useAccounts';
@@ -84,131 +84,136 @@ export function CreateLocalAccountModal() {
   };
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal name="add-local-account">
-      {({ state }) => (
-        <>
-          <ModalHeader
-            title={
-              <ModalTitle title={t('Create Local Account')} shrinkOnOverflow />
-            }
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View>
-            <Form onSubmit={onSubmit}>
-              <InlineField label={t('Name')} width="100%">
-                <InitialFocus>
+      <Modal name="add-local-account">
+        {({ state }) => (
+          <>
+            <ModalHeader
+              title={
+                <ModalTitle
+                  title={t('Create Local Account')}
+                  shrinkOnOverflow
+                />
+              }
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
+            <View>
+              <Form onSubmit={onSubmit}>
+                <InlineField label={t('Name')} width="100%">
+                  <InitialFocus>
+                    <Input
+                      name="name"
+                      value={name}
+                      onChangeValue={setName}
+                      onUpdate={value => {
+                        const name = value.trim();
+                        validateAndSetName(name);
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                  </InitialFocus>
+                </InlineField>
+                {nameError && (
+                  <FormError
+                    style={{ marginLeft: 75, color: theme.warningText }}
+                  >
+                    {nameError}
+                  </FormError>
+                )}
+
+                <View
+                  style={{
+                    width: '100%',
+                    flexDirection: 'row',
+                    justifyContent: 'flex-end',
+                  }}
+                >
+                  <View style={{ flexDirection: 'column' }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        justifyContent: 'flex-end',
+                      }}
+                    >
+                      <Checkbox
+                        id="offbudget"
+                        name="offbudget"
+                        checked={offbudget}
+                        onChange={() => setOffbudget(!offbudget)}
+                      />
+                      <label
+                        htmlFor="offbudget"
+                        style={{
+                          userSelect: 'none',
+                          verticalAlign: 'center',
+                        }}
+                      >
+                        <Trans>Off budget</Trans>
+                      </label>
+                    </View>
+                    <div
+                      style={{
+                        textAlign: 'right',
+                        fontSize: '0.7em',
+                        color: theme.pageTextLight,
+                        marginTop: 3,
+                      }}
+                    >
+                      <Text>
+                        <Trans>
+                          This cannot be changed later. See{' '}
+                          <Link
+                            variant="external"
+                            linkColor="muted"
+                            to="https://actualbudget.org/docs/accounts/#off-budget-accounts"
+                          >
+                            Accounts Overview
+                          </Link>{' '}
+                          for more information.
+                        </Trans>
+                      </Text>
+                    </div>
+                  </View>
+                </View>
+
+                <InlineField label={t('Balance')} width="100%">
                   <Input
-                    name="name"
-                    value={name}
-                    onChangeValue={setName}
+                    name="balance"
+                    inputMode="decimal"
+                    value={balance}
+                    onChangeValue={setBalance}
                     onUpdate={value => {
-                      const name = value.trim();
-                      validateAndSetName(name);
+                      const balance = value.trim();
+                      setBalance(balance);
+                      if (validateBalance(balance) && balanceError) {
+                        setBalanceError(false);
+                      }
                     }}
                     style={{ flex: 1 }}
                   />
-                </InitialFocus>
-              </InlineField>
-              {nameError && (
-                <FormError style={{ marginLeft: 75, color: theme.warningText }}>
-                  {nameError}
-                </FormError>
-              )}
+                </InlineField>
+                {balanceError && (
+                  <FormError style={{ marginLeft: 75 }}>
+                    <Trans>Balance must be a number</Trans>
+                  </FormError>
+                )}
 
-              <View
-                style={{
-                  width: '100%',
-                  flexDirection: 'row',
-                  justifyContent: 'flex-end',
-                }}
-              >
-                <View style={{ flexDirection: 'column' }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      justifyContent: 'flex-end',
-                    }}
+                <ModalButtons>
+                  <Button onPress={() => state.close()}>
+                    <Trans>Back</Trans>
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    style={{ marginLeft: 10 }}
                   >
-                    <Checkbox
-                      id="offbudget"
-                      name="offbudget"
-                      checked={offbudget}
-                      onChange={() => setOffbudget(!offbudget)}
-                    />
-                    <label
-                      htmlFor="offbudget"
-                      style={{
-                        userSelect: 'none',
-                        verticalAlign: 'center',
-                      }}
-                    >
-                      <Trans>Off budget</Trans>
-                    </label>
-                  </View>
-                  <div
-                    style={{
-                      textAlign: 'right',
-                      fontSize: '0.7em',
-                      color: theme.pageTextLight,
-                      marginTop: 3,
-                    }}
-                  >
-                    <Text>
-                      <Trans>
-                        This cannot be changed later. See{' '}
-                        <Link
-                          variant="external"
-                          linkColor="muted"
-                          to="https://actualbudget.org/docs/accounts/#off-budget-accounts"
-                        >
-                          Accounts Overview
-                        </Link>{' '}
-                        for more information.
-                      </Trans>
-                    </Text>
-                  </div>
-                </View>
-              </View>
-
-              <InlineField label={t('Balance')} width="100%">
-                <Input
-                  name="balance"
-                  inputMode="decimal"
-                  value={balance}
-                  onChangeValue={setBalance}
-                  onUpdate={value => {
-                    const balance = value.trim();
-                    setBalance(balance);
-                    if (validateBalance(balance) && balanceError) {
-                      setBalanceError(false);
-                    }
-                  }}
-                  style={{ flex: 1 }}
-                />
-              </InlineField>
-              {balanceError && (
-                <FormError style={{ marginLeft: 75 }}>
-                  <Trans>Balance must be a number</Trans>
-                </FormError>
-              )}
-
-              <ModalButtons>
-                <Button onPress={() => state.close()}>
-                  <Trans>Back</Trans>
-                </Button>
-                <Button
-                  type="submit"
-                  variant="primary"
-                  style={{ marginLeft: 10 }}
-                >
-                  <Trans>Create</Trans>
-                </Button>
-              </ModalButtons>
-            </Form>
-          </View>
-        </>
-      )}
-    </Modal>
+                    <Trans>Create</Trans>
+                  </Button>
+                </ModalButtons>
+              </Form>
+            </View>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }

@@ -1,7 +1,6 @@
 import { Fragment, useRef, useState } from 'react';
-import { ErrorBoundary } from 'react-error-boundary';
-import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import type { ComponentProps, CSSProperties } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { Trans, useTranslation } from 'react-i18next';
 
 import { Button } from '@actual-app/components/button';
@@ -24,6 +23,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '#components/common/Modal';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 import { Notes } from '#components/Notes';
 import { validateAccountName } from '#components/util/accountValidation';
 import { useAccount } from '#hooks/useAccount';
@@ -107,95 +107,95 @@ export function AccountMenuModal({
 
   return (
     <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
-    <Modal
-      name="account-menu"
-      onClose={onClose}
-      containerProps={{
-        style: {
-          height: '45vh',
-        },
-      }}
-    >
-      {({ state }) => (
-        <>
-          <ModalHeader
-            leftContent={
-              <AdditionalAccountMenu
-                account={account}
-                onClose={onCloseAccount}
-                onReopen={onReopenAccount}
-                onToggleRunningBalance={onToggleRunningBalance}
-                onToggleReconciled={onToggleReconciled}
-              />
-            }
-            title={
-              <Fragment>
-                <ModalTitle
-                  isEditable
-                  title={currentAccountName}
-                  onTitleUpdate={onRename}
+      <Modal
+        name="account-menu"
+        onClose={onClose}
+        containerProps={{
+          style: {
+            height: '45vh',
+          },
+        }}
+      >
+        {({ state }) => (
+          <>
+            <ModalHeader
+              leftContent={
+                <AdditionalAccountMenu
+                  account={account}
+                  onClose={onCloseAccount}
+                  onReopen={onReopenAccount}
+                  onToggleRunningBalance={onToggleRunningBalance}
+                  onToggleReconciled={onToggleReconciled}
                 />
-                {accountNameError && (
-                  <View style={{ color: theme.warningText }}>
-                    {accountNameError}
-                  </View>
-                )}
-              </Fragment>
-            }
-            rightContent={<ModalCloseButton onPress={() => state.close()} />}
-          />
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-            }}
-          >
+              }
+              title={
+                <Fragment>
+                  <ModalTitle
+                    isEditable
+                    title={currentAccountName}
+                    onTitleUpdate={onRename}
+                  />
+                  {accountNameError && (
+                    <View style={{ color: theme.warningText }}>
+                      {accountNameError}
+                    </View>
+                  )}
+                </Fragment>
+              }
+              rightContent={<ModalCloseButton onPress={() => state.close()} />}
+            />
             <View
               style={{
-                overflowY: 'auto',
                 flex: 1,
+                flexDirection: 'column',
               }}
             >
-              <Notes
-                notes={
-                  originalNotes && originalNotes.length > 0
-                    ? originalNotes
-                    : t('No notes')
-                }
-                editable={false}
-                focused={false}
-                getStyle={() => ({
-                  borderRadius: 6,
-                  ...((!originalNotes || originalNotes.length === 0) && {
-                    justifySelf: 'center',
-                    alignSelf: 'center',
-                    color: theme.pageTextSubdued,
-                  }),
-                })}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                alignContent: 'space-between',
-                paddingTop: 10,
-              }}
-            >
-              <Button style={buttonStyle} onPress={_onEditNotes}>
-                <SvgNotesPaper
-                  width={20}
-                  height={20}
-                  style={{ paddingRight: 5 }}
+              <View
+                style={{
+                  overflowY: 'auto',
+                  flex: 1,
+                }}
+              >
+                <Notes
+                  notes={
+                    originalNotes && originalNotes.length > 0
+                      ? originalNotes
+                      : t('No notes')
+                  }
+                  editable={false}
+                  focused={false}
+                  getStyle={() => ({
+                    borderRadius: 6,
+                    ...((!originalNotes || originalNotes.length === 0) && {
+                      justifySelf: 'center',
+                      alignSelf: 'center',
+                      color: theme.pageTextSubdued,
+                    }),
+                  })}
                 />
-                <Trans>Edit notes</Trans>
-              </Button>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  justifyContent: 'space-between',
+                  alignContent: 'space-between',
+                  paddingTop: 10,
+                }}
+              >
+                <Button style={buttonStyle} onPress={_onEditNotes}>
+                  <SvgNotesPaper
+                    width={20}
+                    height={20}
+                    style={{ paddingRight: 5 }}
+                  />
+                  <Trans>Edit notes</Trans>
+                </Button>
+              </View>
             </View>
-          </View>
-        </>
-      )}
-    </Modal>
+          </>
+        )}
+      </Modal>
     </ErrorBoundary>
   );
 }
