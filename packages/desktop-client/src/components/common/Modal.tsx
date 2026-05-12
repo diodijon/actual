@@ -12,6 +12,8 @@ import {
 } from 'react-aria-components';
 import { useHotkeysContext } from 'react-hotkeys-hook';
 import { useTranslation } from 'react-i18next';
+import {ErrorBoundary} from 'react-error-boundary';
+import { FeatureErrorFallback } from '#components/FeatureErrorFallback';
 
 import { Button } from '@actual-app/components/button';
 import { useResponsive } from '@actual-app/components/hooks/useResponsive';
@@ -71,6 +73,7 @@ export const Modal = ({
   };
 
   return (
+    <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
     <ReactAriaModalOverlay
       data-testid={`${name}-modal`}
       isDismissable
@@ -138,9 +141,11 @@ export const Modal = ({
                 }}
               >
                 <View style={{ paddingTop: 0, flex: 1, flexShrink: 0 }}>
+                  <ErrorBoundary FallbackComponent={FeatureErrorFallback}>
                   {typeof children === 'function'
                     ? children(modalProps)
                     : children}
+                  </ErrorBoundary>
                 </View>
                 {isLoading && (
                   <View
@@ -168,6 +173,7 @@ export const Modal = ({
         </ReactAriaModal>
       </View>
     </ReactAriaModalOverlay>
+    </ErrorBoundary>
   );
 };
 
